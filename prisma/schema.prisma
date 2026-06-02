@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Papel {
+  ALUNO
+  PROFESSOR
+  DEPPI
+  ADMIN
+}
+
+enum StatusCurso {
+  RASCUNHO
+  PUBLICADO
+  EM_ANDAMENTO
+  ENCERRADO
+  CANCELADO
+}
+
+enum StatusInscricao {
+  PENDENTE
+  APROVADA
+  REJEITADA
+  CANCELADA
+  LISTA_ESPERA
+}
+
+model Instituicao {
+  id String @id @default(uuid())
+  nome String
+  sigla String @unique
+  endereco String?
+  ativo Boolean @default(true)
+  createdAt DateTime @default(now())
+  
+  usuarios User[]
+  
+  cursos CursoExtensao[]
+
+  @@map("instituicoes")
+
+}
+
+model User {
+  id String @id @default(uuid())
+  nome String
+  email String @unique
+  senhaHash String
+  papel Papel
+  ativo Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  instituicaoId String
+  instituicao Instituicao @relation(fields: [instituicaoId], references: [id])
+
+  perfilAluno PerfilAluno?
+
+  perfilProfessor PerfilProfessor?
+
+  permissoes Permissao[]
+
+  relatorios Relatorio[]
+
+  @@map("users")
+}
+
+model PerfilAluno {
+  id String @id @default(uuid())
+  matricula String @unique
+  cursoGraduacao String
+  semestre Int?
+  
+  userId String @unique
+  user User @relation(fields: [userId], references: [id])
+
+  inscricoes Inscricao[]
+
+  @@map("perfis_alunos")
+}
+
+model PerfilProfessor {
+  id String @id @default(uuid())
+  siape String @unique
+  titulacao String?
+  departamento String?
+
+  userId String @unique
+  user User @relation(fields: [userId], references: [id])
+
+  cursos CursoExtensao[]
+
+  @@map("perfis_professor")
+}
+
+model CursoExtensao {
+  id String @id @default(uuid())
+  titulo String
+  descricao String @db.Text
+  cargaHoraria Int
+  vagas Int
+  dataInicio DateTime
+  dataFim DateTime
+  status StatusCurso @default(RASCUNHO)
+  createdAt DateTime @default(now())
+  
+  professorId String 
+  professor PerfilProfessor @relation(fields: [professorId], references: [id])
+
+  instituicaoId String
+  instituicao Instituicao @relation(fields: [instituicaoId], references: [id])
+
+  inscricoes Inscricao[]
+
+
+  @@map("cursos_extensao")
+}
+
+//resultante da relação N:N entre perfis_alunos e cursos_extensao
+model Inscricao {
+  id String @id @default(uuid())
+  status StatusInscricao @default(PENDENTE)
+  inscricaoEm DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  alunoId String
+  aluno PerfilAluno @relation(fields: [alunoId], references: [id])
+
+  cursoId String
+  curso CursoExtensao @relation(fields: [cursoId], references: [id])
+
+  @@unique([alunoId, cursoId])
+  @@map("inscricoes")
+}
+
+model Permissao {
+  id String @id @default(uuid())
+  recurso String //ex: "cursos", "professores", "inscrições"
+  acao String //ex: "create", "delete", "update", "delete"
+  concedidoEm DateTime @default(now())
+
+  userId String
+  user User @relation(fields: [userId], references: [id]) //um registro de permissoes pertence apenas a um usuario
+
+  @@unique([userId, recurso, acao]) // nao se pode repetir um registro userId+recurso+acao
+  @@map("permissoes")
+}
+
+//essa tabela vai registrar os relatorios gerados. Funciona como um recebio/comprovante.
+model Relatorio {
+  id String @id @default(uuid())
+  tipo String //ex "alunos_ativos", "inscricoes_por_curso"
+  parametros Json?
+  arquivoUrl String?
+  geradoEm DateTime @default(now())
+
+  geradoPorId String
+  geradoPor User @relation(fields: [geradoPorId], references: [id])
+
+  @@map("relatorios")
+}
