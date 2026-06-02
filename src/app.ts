@@ -1,10 +1,12 @@
 import express from 'express';
 import { AuthRoutes } from './modules/auth/auth.routes.js';
+import { ProfileRoutes } from './modules/perfil/profile.routes.js';
 
 const app = express();
 
 app.use(express.json());
 app.use('/autenticacao', AuthRoutes);
+app.use('/perfil', ProfileRoutes);
 
 app.get('/health', (req, res) => {
 	res.status(200).json({
