@@ -10,4 +10,13 @@ export class AuthController {
       res.status(400).json({ error: error.message});
     }
   }
+
+  static async login (req: Request, res: Response) {
+    try {
+      const result = await AuthService.login(req.body);
+      return res.status(200).json(result)
+    } catch (error: any) {
+      res.status(401).json({ error: error.message });
+    }
+  }
 }

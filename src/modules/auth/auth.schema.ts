@@ -6,5 +6,11 @@ export const registerSchema = z.object({
   senha: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres.'),
   instituicaoId: z.uuid('ID da instituicao inválido.')
 })
-
 export type RegisterDTO = z.infer<typeof registerSchema>
+
+export const loginSchema = z.object({
+  email: z.email('Email inválido.'),
+  senha: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres.')
+})
+export type LoginDTO = z.infer<typeof loginSchema>
+
