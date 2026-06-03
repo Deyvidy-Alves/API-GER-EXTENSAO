@@ -2,64 +2,108 @@ import { prisma } from '../src/lib/prisma.js'
 import { hash } from 'bcrypt'
 
 async function main() {
-  //cria os papeis
-  const papeis = await Promise.all([
-    prisma.papel.upsert({ where: { nome: 'ADMIN' }, update: {}, create: { nome: 'ADMIN' } }),
-    prisma.papel.upsert({ where: { nome: 'DEPPI' }, update: {}, create: { nome: 'DEPPI' } }),
-    prisma.papel.upsert({ where: { nome: 'PROFESSOR' },     update: {}, create: { nome: 'PROFESSOR' } }),
+  // papéis
+  const [admin, deppi, professor, aluno] = await Promise.all([
+    prisma.papel.upsert({ where: { nome: 'ADMIN' },     update: {}, create: { nome: 'ADMIN' } }),
+    prisma.papel.upsert({ where: { nome: 'DEPPI' },     update: {}, create: { nome: 'DEPPI' } }),
+    prisma.papel.upsert({ where: { nome: 'PROFESSOR' }, update: {}, create: { nome: 'PROFESSOR' } }),
     prisma.papel.upsert({ where: { nome: 'ALUNO' },     update: {}, create: { nome: 'ALUNO' } }),
-  ]);
+  ])
 
-  const permissoes = await Promise.all([
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'cursos', acao: 'create' } }, update: {}, create: { recurso: 'cursos', acao: 'create' } }),
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'cursos', acao: 'read'   } }, update: {}, create: { recurso: 'cursos', acao: 'read'   } }),
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'cursos', acao: 'update' } }, update: {}, create: { recurso: 'cursos', acao: 'update' } }),
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'cursos', acao: 'delete' } }, update: {}, create: { recurso: 'cursos', acao: 'delete' } }),
+  // permissões granulares por recurso
+  const upsertPerm = (recurso: string, acao: string) =>
+    prisma.permissao.upsert({
+      where: { recurso_acao: { recurso, acao } },
+      update: {},
+      create: { recurso, acao },
+    })
 
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'inscricoes', acao: 'create' } }, update: {}, create: { recurso: 'inscricoes', acao: 'create' } }),
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'inscricoes', acao: 'read'   } }, update: {}, create: { recurso: 'inscricoes', acao: 'read'   } }),
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'inscricoes', acao: 'update' } }, update: {}, create: { recurso: 'inscricoes', acao: 'update' } }),
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'inscricoes', acao: 'delete' } }, update: {}, create: { recurso: 'inscricoes', acao: 'delete' } }),
-
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'usuarios', acao: 'create' } }, update: {}, create: { recurso: 'usuarios', acao: 'create' } }),
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'usuarios', acao: 'read'   } }, update: {}, create: { recurso: 'usuarios', acao: 'read'   } }),
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'usuarios', acao: 'update' } }, update: {}, create: { recurso: 'usuarios', acao: 'update' } }),
-    prisma.permissao.upsert({ where: { recurso_acao: { recurso: 'usuarios', acao: 'delete' } }, update: {}, create: { recurso: 'usuarios', acao: 'delete' } }),
-  ]);
-
-  const [admin, deppi, professor, aluno] = papeis;
   const [
-    cursosCreate, cursosRead, cursosUpdate, cursosDelete,
-    inscrCreate, inscrRead, inscrUpdate, inscrDelete,
-    usersCreate, usersRead, usersUpdate, usersDelete,
-  ] = permissoes;
+    alunoCreate, alunoRead, alunoUpdate, alunoDelete,
+    professorCreate, professorRead, professorUpdate, professorDelete,
+    deppiCreate, deppiRead, deppiUpdate, deppiDelete,
+    cursoCreate, cursoRead, cursoUpdate, cursoDelete,
+    inscricaoCreate, inscricaoRead, inscricaoUpdate, inscricaoDelete,
+    relatorioCreate, relatorioRead,
+  ] = await Promise.all([
+    upsertPerm('aluno', 'create'),
+    upsertPerm('aluno', 'read'),
+    upsertPerm('aluno', 'update'),
+    upsertPerm('aluno', 'delete'),
 
-   const atribuicoes = [
+    upsertPerm('professor', 'create'),
+    upsertPerm('professor', 'read'),
+    upsertPerm('professor', 'update'),
+    upsertPerm('professor', 'delete'),
+
+    upsertPerm('deppi', 'create'),
+    upsertPerm('deppi', 'read'),
+    upsertPerm('deppi', 'update'),
+    upsertPerm('deppi', 'delete'),
+
+    upsertPerm('curso', 'create'),
+    upsertPerm('curso', 'read'),
+    upsertPerm('curso', 'update'),
+    upsertPerm('curso', 'delete'),
+
+    upsertPerm('inscricao', 'create'),
+    upsertPerm('inscricao', 'read'),
+    upsertPerm('inscricao', 'update'),
+    upsertPerm('inscricao', 'delete'),
+
+    upsertPerm('relatorio', 'create'),
+    upsertPerm('relatorio', 'read'),
+  ])
+
+  const atribuicoes = [
+    // ALUNO — ver cursos, se inscrever, ver suas inscrições
+    { papelId: aluno.id, permissaoId: cursoRead.id },
+    { papelId: aluno.id, permissaoId: inscricaoCreate.id },
+    { papelId: aluno.id, permissaoId: inscricaoRead.id },
+
+    // PROFESSOR — gerenciar seus cursos, ver inscrições
+    { papelId: professor.id, permissaoId: cursoCreate.id },
+    { papelId: professor.id, permissaoId: cursoRead.id },
+    { papelId: professor.id, permissaoId: cursoUpdate.id },
+    { papelId: professor.id, permissaoId: inscricaoRead.id },
+
+    // DEPPI — gerenciar professores, cursos, inscrições e alunos, gerar relatórios
+    { papelId: deppi.id, permissaoId: professorCreate.id },
+    { papelId: deppi.id, permissaoId: professorRead.id },
+    { papelId: deppi.id, permissaoId: professorUpdate.id },
+    { papelId: deppi.id, permissaoId: cursoRead.id },
+    { papelId: deppi.id, permissaoId: cursoUpdate.id },
+    { papelId: deppi.id, permissaoId: cursoDelete.id },
+    { papelId: deppi.id, permissaoId: inscricaoRead.id },
+    { papelId: deppi.id, permissaoId: inscricaoUpdate.id },
+    { papelId: deppi.id, permissaoId: inscricaoDelete.id },
+    { papelId: deppi.id, permissaoId: alunoRead.id },
+    { papelId: deppi.id, permissaoId: relatorioCreate.id },
+    { papelId: deppi.id, permissaoId: relatorioRead.id },
+
     // ADMIN — tudo
-    ...permissoes.map(p => ({ papelId: admin.id, permissaoId: p.id })),
-
-    // DEPPI — tudo exceto deletar usuários
-    { papelId: deppi.id, permissaoId: cursosCreate.id },
-    { papelId: deppi.id, permissaoId: cursosRead.id },
-    { papelId: deppi.id, permissaoId: cursosUpdate.id },
-    { papelId: deppi.id, permissaoId: cursosDelete.id },
-    { papelId: deppi.id, permissaoId: inscrCreate.id },
-    { papelId: deppi.id, permissaoId: inscrRead.id },
-    { papelId: deppi.id, permissaoId: inscrUpdate.id },
-    { papelId: deppi.id, permissaoId: inscrDelete.id },
-    { papelId: deppi.id, permissaoId: usersCreate.id },
-    { papelId: deppi.id, permissaoId: usersRead.id },
-    { papelId: deppi.id, permissaoId: usersUpdate.id },
-
-    // PROFESSOR — criar e ler cursos, ler inscrições
-    { papelId: professor.id, permissaoId: cursosCreate.id },
-    { papelId: professor.id, permissaoId: cursosRead.id },
-    { papelId: professor.id, permissaoId: inscrRead.id },
-
-    // ALUNO — ler cursos, criar e ler inscrições
-    { papelId: aluno.id, permissaoId: cursosRead.id },
-    { papelId: aluno.id, permissaoId: inscrCreate.id },
-    { papelId: aluno.id, permissaoId: inscrRead.id },
+    { papelId: admin.id, permissaoId: alunoCreate.id },
+    { papelId: admin.id, permissaoId: alunoRead.id },
+    { papelId: admin.id, permissaoId: alunoUpdate.id },
+    { papelId: admin.id, permissaoId: alunoDelete.id },
+    { papelId: admin.id, permissaoId: professorCreate.id },
+    { papelId: admin.id, permissaoId: professorRead.id },
+    { papelId: admin.id, permissaoId: professorUpdate.id },
+    { papelId: admin.id, permissaoId: professorDelete.id },
+    { papelId: admin.id, permissaoId: deppiCreate.id },
+    { papelId: admin.id, permissaoId: deppiRead.id },
+    { papelId: admin.id, permissaoId: deppiUpdate.id },
+    { papelId: admin.id, permissaoId: deppiDelete.id },
+    { papelId: admin.id, permissaoId: cursoCreate.id },
+    { papelId: admin.id, permissaoId: cursoRead.id },
+    { papelId: admin.id, permissaoId: cursoUpdate.id },
+    { papelId: admin.id, permissaoId: cursoDelete.id },
+    { papelId: admin.id, permissaoId: inscricaoCreate.id },
+    { papelId: admin.id, permissaoId: inscricaoRead.id },
+    { papelId: admin.id, permissaoId: inscricaoUpdate.id },
+    { papelId: admin.id, permissaoId: inscricaoDelete.id },
+    { papelId: admin.id, permissaoId: relatorioCreate.id },
+    { papelId: admin.id, permissaoId: relatorioRead.id },
   ]
 
   for (const a of atribuicoes) {
@@ -70,6 +114,7 @@ async function main() {
     })
   }
 
+  // instituição
   const instituicao = await prisma.instituicao.upsert({
     where: { sigla: 'IFCE-CED' },
     update: {},
@@ -80,28 +125,37 @@ async function main() {
     }
   })
 
-  const senhaHash = await hash('admin123', 10);
+  // usuários iniciais
+  const usuarios = [
+    { nome: 'Administrador',   email: 'admin@ifce.edu.br',     senha: 'admin123',     papel: admin },
+    { nome: 'Membro DEPPI',    email: 'deppi@ifce.edu.br',     senha: 'deppi123',     papel: deppi },
+    { nome: 'Professor Teste', email: 'professor@ifce.edu.br', senha: 'professor123', papel: professor },
+    { nome: 'Aluno Teste',     email: 'aluno@ifce.edu.br',     senha: 'aluno123',     papel: aluno },
+  ]
 
-  const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@ifce.edu.br' },
-    update: {},
-    create: {
-      nome: 'Administrador',
-      email: 'admin@ifce.edu.br',
-      senhaHash,
-      ativo: true,
-      instituicaoId: instituicao.id // precisas ter uma instituição criada antes
-    }
-  });
+  for (const u of usuarios) {
+    const senhaHash = await hash(u.senha, 10)
 
-  await prisma.userPapel.upsert({
-    where: { userId_papelId: { userId: adminUser.id, papelId: admin.id } },
-    update: {},
-    create: { userId: adminUser.id, papelId: admin.id }
-  })
+    const user = await prisma.user.upsert({
+      where: { email: u.email },
+      update: {},
+      create: {
+        nome: u.nome,
+        email: u.email,
+        senhaHash,
+        ativo: true,
+        instituicaoId: instituicao.id,
+      }
+    })
 
+    await prisma.userPapel.upsert({
+      where: { userId_papelId: { userId: user.id, papelId: u.papel.id } },
+      update: {},
+      create: { userId: user.id, papelId: u.papel.id }
+    })
+  }
 
-  console.log("seed concluida");
+  console.log('Seed concluída.')
 }
 
 main()

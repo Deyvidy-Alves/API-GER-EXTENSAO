@@ -9,6 +9,7 @@ const adapter = new PrismaMariaDb({
   password: getEnv("DATABASE_PASSWORD"),
   database: getEnv("DATABASE_NAME"),
   connectionLimit: 5,
+  allowPublicKeyRetrieval: true,
 });
 const prisma = new PrismaClient({ adapter });
 
