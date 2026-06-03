@@ -1,7 +1,7 @@
 import express from 'express';
 import { AuthRoutes } from './modules/auth/auth.routes.js';
 import { ProfileRoutes } from './modules/perfil/profile.routes.js';
-import { UserRoutes } from './modules/user/user.routes.js';
+import { UserRoutes } from './modules/users/user.routes.js';
 
 const app = express();
 
