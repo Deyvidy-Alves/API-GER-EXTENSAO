@@ -21,6 +21,6 @@ export class AuthController {
   }
 
    static async me (req: Request, res: Response) {
-     return res.status(200).json( { user: req.user });
+     return res.status(200).json({ user: req.user });
   }
 }

@@ -10,7 +10,7 @@ export const createUserSchema = z.object({
 export type CreateUserDTO = z.infer<typeof createUserSchema>
 
 export const updateUserSchema = z.object({
-  nome: z.string().length(2).optional(),
+  nome: z.string().min(2).optional(),
   email: z.email().optional(),
   ativo: z.boolean().optional(),
 });
