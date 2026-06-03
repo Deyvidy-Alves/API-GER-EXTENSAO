@@ -9,8 +9,6 @@ const router = Router();
 router.post('/registro', validateZod(registerSchema, 'body'), AuthController.register);
 router.post('/login', validateZod(loginSchema, 'body'), AuthController.login);
 
-router.get('/me', authMiddleware, (req, res) => {
-  res.json(req.user);
-})
+router.get('/me', authMiddleware, AuthController.me);
 
 export { router as AuthRoutes }

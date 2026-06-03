@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 import { ProfileService } from "./profile.service.js";
 
+
 export class ProfileController {
   static async upsertStudentProfile (req: Request, res: Response) {
     try {
@@ -12,4 +13,5 @@ export class ProfileController {
       res.status(400).json({ error: error.message });
     }
   }
+
 }

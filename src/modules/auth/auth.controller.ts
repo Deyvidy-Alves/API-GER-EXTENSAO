@@ -19,4 +19,8 @@ export class AuthController {
       res.status(401).json({ error: error.message });
     }
   }
+
+   static async me (req: Request, res: Response) {
+     return res.status(200).json( { user: req.user });
+  }
 }
