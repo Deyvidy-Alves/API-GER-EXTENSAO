@@ -29,6 +29,33 @@ enum StatusInscricao {
   LISTA_ESPERA
 }
 
+enum TipoCurso {
+  FORMACAO_INICIAL //a partir de 160h
+  FORMACAO_CONTINUADA //mínimo de 40h
+}
+
+enum Sexo {
+  MASCULINO
+  FEMININO
+}
+
+enum CorRaca {
+  AMARELA
+  BRANCA
+  PARDA
+  INDIGENA
+  NAO_DECLARADA
+}
+
+enum RendaFamiliarPerCapita {
+  ATE_MEIO_SM
+  MEIO_A_UM_SM
+  UM_A_UM_E_MEIO_SM
+  UM_E_MEIO_A_DOIS_SM
+  DOIS_E_MEIO_A_TRES_SM
+  ACIMA_DE_TRES_SM
+}
+
 model Instituicao {
   id String @id @default(uuid())
   nome String
@@ -114,6 +141,38 @@ model PerfilAluno {
   matricula String @unique
   cursoGraduacao String
   semestre Int?
+
+  //DADOS PESSOAIS
+  nomeSocial String?
+  dataNascimento DateTime?
+  sexo Sexo?
+  naturalidade String?
+  corRaca CorRaca?
+
+  //ENDERECO
+  endereco String?
+  numero String?
+  bairro String?
+  complemento String?
+  cep String?
+  cidade String?
+
+  //CONTATO E FORMACAO
+  grauInstrucao String?
+  profissao String?
+  telefoneComercial String?
+  telefoneCelular String?
+
+  //DOCUMENTACAO
+  cpf String? @unique
+  rg String? @unique
+  rgOrgaoEmissor String?
+  rgUf String?
+  rgDataEmissao DateTime?
+
+  //SOCIALECONOMICO
+  rendaFamiliarPerCapita RendaFamiliarPerCapita?
+  numPessoasFamilia Int?
   
   userId String @unique
   user User @relation(fields: [userId], references: [id])
@@ -142,6 +201,7 @@ model CursoExtensao {
   titulo String
   descricao String @db.Text
   cargaHoraria Int
+  tipo TipoCurso @default(FORMACAO_CONTINUADA)
   vagas Int
   dataInicio DateTime
   dataFim DateTime
