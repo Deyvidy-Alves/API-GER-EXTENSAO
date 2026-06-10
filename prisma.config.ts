@@ -5,7 +5,7 @@ import { defineConfig } from "prisma/config";
 import { getEnv } from "./src/utils/getEnv.js";
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: "prisma/schema",
   migrations: {
     path: "prisma/migrations",
     seed: "tsx prisma/seed.ts",

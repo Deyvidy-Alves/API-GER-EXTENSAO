@@ -8,7 +8,8 @@
     "start": "tsc && node dist/server.js"
   },
   "prisma": {
-    "seed": "tsx prisma/need.ts"
+    "seed": "tsx prisma/need.ts",
+    "schema": "./prisma/schema"
   },
   "repository": {
     "type": "git",

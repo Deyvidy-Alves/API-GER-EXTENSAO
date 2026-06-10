@@ -1,0 +1,22 @@
+model CursoExtensao {
+  id           String      @id @default(uuid())
+  titulo       String
+  descricao    String      @db.Text
+  cargaHoraria Int
+  tipo         TipoCurso   @default(FORMACAO_CONTINUADA)
+  vagas        Int
+  dataInicio   DateTime
+  dataFim      DateTime
+  status       StatusCurso @default(RASCUNHO)
+  createdAt    DateTime    @default(now())
+
+  professorId String
+  professor   PerfilProfessor @relation(fields: [professorId], references: [id])
+
+  instituicaoId String
+  instituicao   Instituicao @relation(fields: [instituicaoId], references: [id])
+
+  inscricoes Inscricao[]
+
+  @@map("cursos_extensao")
+}

@@ -1,0 +1,82 @@
+enum StatusCurso {
+  RASCUNHO
+  PUBLICADO
+  EM_ANDAMENTO
+  ENCERRADO
+  CANCELADO
+}
+
+enum StatusInscricao {
+  PENDENTE
+  APROVADA
+  REJEITADA
+  CANCELADA
+  LISTA_ESPERA
+}
+
+enum TipoCurso {
+  FORMACAO_INICIAL //a partir de 160h
+  FORMACAO_CONTINUADA //mínimo de 40h
+}
+
+enum Sexo {
+  MASCULINO
+  FEMININO
+}
+
+enum CorRaca {
+  AMARELA
+  BRANCA
+  PARDA
+  INDIGENA
+  NAO_DECLARADA
+}
+
+enum RendaFamiliarPerCapita {
+  ATE_MEIO_SM
+  MEIO_A_UM_SM
+  UM_A_UM_E_MEIO_SM
+  UM_E_MEIO_A_DOIS_SM
+  DOIS_E_MEIO_A_TRES_SM
+  ACIMA_DE_TRES_SM
+}
+
+// ENUMS PARA USER
+enum EstadoCivil {
+  SOLTEIRO
+  CASADO
+  DIVORCIADO
+  VIUVO
+  UNIAO_ESTAVEL
+}
+
+enum GrupoSanguineo {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+}
+
+enum SituacaoServidor {
+  ATIVO
+  INATIVO
+  APOSENTADO
+  CEDIDO
+  AFASTADO
+}
+
+enum RegimeTrabalho {
+  DEDICACAO_EXCLUSIVA
+  QUARENTA_HORAS
+  VINTE_HORAS
+}
+
+enum JornadaTrabalho {
+  INTEGRAL
+  PARCIAL
+  NOTURNO
+}

@@ -1,0 +1,15 @@
+model Inscricao {
+  id          String          @id @default(uuid())
+  status      StatusInscricao @default(PENDENTE)
+  inscricaoEm DateTime        @default(now())
+  updateAt    DateTime        @updatedAt
+
+  alunoId String
+  aluno   PerfilAluno @relation(fields: [alunoId], references: [id])
+
+  cursoId String
+  curso   CursoExtensao @relation(fields: [cursoId], references: [id])
+
+  @@unique([alunoId, cursoId])
+  @@map("inscricoes")
+}
