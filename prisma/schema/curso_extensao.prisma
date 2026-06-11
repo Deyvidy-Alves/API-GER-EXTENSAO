@@ -40,14 +40,13 @@ model CursoExtensao {
   inscricoes Inscricao[]
 
   // CAMPOS MULTI-VALORES
-  municipios      CursoMunicipio[]
+  municipios       CursoMunicipio[]
   formasAvaliacao  CursoFormaAvaliacao[]
   formasDivulgacao CursoFormaDivulgacao[]
   atividades       CursoAtividade[]
   equipes          MembroEquipe[]
-  parcerias Parceria[]
-  orcamentos ItemOrcamento[]
-  vinculosAcao VinculoAcao[]
+  parcerias        Parceria[]
+  orcamentos       ItemOrcamento[]
 
   @@map("cursos_extensao")
 }

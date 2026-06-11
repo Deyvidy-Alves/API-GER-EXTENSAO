@@ -1,10 +1,10 @@
 model ItemOrcamento {
-  id String @id @default(uuid())
+  id    String         @id @default(uuid())
   conta ContaOrcamento
-  valor Decimal @db.Decimal(10, 2)
+  valor Decimal        @db.Decimal(10, 2)
 
   cursoId String
-  curso CursoExtensao @relation(fields:[cursoId], relation:[id])
+  curso   CursoExtensao @relation(fields: [cursoId], references: [id])
 
   @@unique([cursoId, conta])
   @@map("itens_orcamento")
