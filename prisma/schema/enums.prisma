@@ -80,3 +80,79 @@ enum JornadaTrabalho {
   PARCIAL
   NOTURNO
 }
+
+// RELACIONADO AOS CURSOS DE EXTENSAO
+enum TipoAcao {
+  CURSO
+  EVENTO
+  PROJETO
+  PROGRAMA
+}
+
+enum LocalAtuacao {
+  URBANO
+  RURAL
+}
+
+enum ModeloOferta {
+  PRESENCIAL
+  ONLINE
+  HIBRIDO
+}
+
+enum FormaAvaliacao {
+  PARTICIPACAO
+  QUESTIONARIO
+  DEBATE
+  FREQUENCIA
+  TESTE_OBJETIVO
+  PROVA
+  TRABALHOS_ESCRITOS
+}
+
+enum FormaDivulgacao {
+  AUDIO
+  CARTAZ
+  EMAIL
+  SISTEMA_ACADEMICO
+  REDES_SOCIAIS
+  CONVITE
+  ARTICULACOES_INSTITUCIONAIS
+}
+
+enum AtividadeRealizada {
+  MINICURSO
+  PALESTRA
+  WORKSHOP
+  SEMINARIO
+  OFICINA
+  EXPOSICAO
+  HACKATHON
+}
+
+enum CategoriaEquipe {
+  COORDENADOR
+  INTEGRANTE
+}
+
+enum VinculoEquipe {
+  DOCENTE_IFCE
+  TECNICO_IFCE
+  DISCENTE_IFCE
+  EXTERNO
+}
+
+enum ContaOrcamento {
+  BOLSA_AUXILIO_ESTUDANTES
+  BOLSA_AUXILIO_PESQUISADORES
+  DIARIAS_PESSOAL_CIVIL
+
+  //Quando uma instituição paga uma bolsa para alguém, o governo exige que ela recolha um percentual adicional sobre esse valor para cobrir obrigações previdenciárias — basicamente a contribuição ao INSS patronal.
+  ENCARGOS_PATRONAIS //encargos trabalhistas sobre bolsas pagas
+  
+  EQUIPAMENTO_MATERIAL_PERMANENTE //compra de equipamento que fica no patrimonio
+  MATERIAL_CONSUMO // material usado no curso
+  OUTROS_SERVICOS_PF //pagamento de servicoes a pessoa fisica
+  OUTROS_SERVICOES_PJ // pagamento de servicos a pessoa juridica
+  PASSAGENS_LOCOMOCAO
+}
