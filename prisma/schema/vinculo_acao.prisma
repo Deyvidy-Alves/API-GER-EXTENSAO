@@ -1,0 +1,12 @@
+model VinculoAcao {
+  id String @id @default(uuid())
+
+  acao String
+  tipo String
+
+  cursoId String
+  curso CursoExtensao @relation(fields:[cursoId], references:[id])
+
+  
+  @@map("vinculos_acao")
+}

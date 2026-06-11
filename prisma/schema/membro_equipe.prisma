@@ -1,0 +1,16 @@
+model MembroEquipe {
+  categoria          CategoriaEquipe
+  vinculo            VinculoEquipe
+  receberaBolsa      Boolean         @default(false)
+  horasSemanais      Int
+  inicioParticipacao DateTime
+  fimParticipacao    DateTime
+
+  cursoId String
+  curso   CursoExtensao @relation(fields: [cursoId], references: [id])
+  userId  String
+  user    User          @relation(fields: [userId], references: [id])
+
+  @@id([cursoId, userId])
+  @@map("membros_equipe")
+}

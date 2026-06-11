@@ -1,22 +1,53 @@
 model CursoExtensao {
-  id           String      @id @default(uuid())
-  titulo       String
-  descricao    String      @db.Text
-  cargaHoraria Int
-  tipo         TipoCurso   @default(FORMACAO_CONTINUADA)
-  vagas        Int
-  dataInicio   DateTime
-  dataFim      DateTime
-  status       StatusCurso @default(RASCUNHO)
-  createdAt    DateTime    @default(now())
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
 
-  professorId String
-  professor   PerfilProfessor @relation(fields: [professorId], references: [id])
+  // IDENTIFICACAO
+  titulo        String
+  tipoAcao      TipoAcao
+  tipo          TipoCurso    @default(FORMACAO_CONTINUADA) // FormacaoInicial ≥160h | FormacaoContinuada ≥40h
+  areaTematica  String
+  linhaExtensao String
+  localAtuacao  LocalAtuacao
+  modeloOferta  ModeloOferta
+  status        StatusCurso  @default(RASCUNHO)
 
+  // DATAS, VAGAS, CARGA HORARIA
+  cargaHoraria    Int
+  dataInicio      DateTime
+  dataFim         DateTime
+  minBeneficiados Int
+  maxBeneficiados Int
+
+  // METADOS INSTITUCIONAIS
+  fomento               String?
+  programaInstitucional String?
+
+  // TEXTOS DESCRITIVOS
+  apresentacao         String @db.Text
+  justificativa        String @db.Text
+  publicoAlvo          String @db.Text
+  objetivoGeral        String @db.Text
+  objetivosEspecificos String @db.Text
+  metodologia          String @db.Text
+
+  // FKs
+  professorId   String
+  professor     PerfilProfessor @relation(fields: [professorId], references: [id])
   instituicaoId String
-  instituicao   Instituicao @relation(fields: [instituicaoId], references: [id])
+  instituicao   Instituicao     @relation(fields: [instituicaoId], references: [id])
 
   inscricoes Inscricao[]
+
+  // CAMPOS MULTI-VALORES
+  municipios      CursoMunicipio[]
+  formasAvaliacao  CursoFormaAvaliacao[]
+  formasDivulgacao CursoFormaDivulgacao[]
+  atividades       CursoAtividade[]
+  equipes          MembroEquipe[]
+  parcerias Parceria[]
+  orcamentos ItemOrcamento[]
+  vinculosAcao VinculoAcao[]
 
   @@map("cursos_extensao")
 }

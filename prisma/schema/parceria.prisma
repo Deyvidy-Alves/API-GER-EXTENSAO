@@ -1,0 +1,13 @@
+model Parceria {
+  id String @id @default(uuid())
+  instituicaoParceira String
+  parceriaFormalizada Boolean @default(false)
+  instrumentoUtilizado String? // tipo do documento legal que formaliza a parceria entre o IFCE e a instituição parceiras. Ex: convenio, termo de cooperacao, acordo de parceria
+  numeroInstrumento String? //numero identificador do documento
+
+  cursoId String
+  curso CursoExtensao @relation(fields:[cursoId], references:[id])
+
+  @@unique([cursoId, numeroInstrumento]) //evita que o numero do instrumento apareça no mesmo curso mais de 1x
+  @@map("parcerias")
+}

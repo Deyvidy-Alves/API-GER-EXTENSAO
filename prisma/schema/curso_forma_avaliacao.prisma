@@ -1,0 +1,9 @@
+model CursoFormaAvaliacao {
+  forma FormaAvaliacao
+
+  cursoId String
+  curso   CursoExtensao @relation(fields: [cursoId], references: [id])
+
+  @@id([cursoId, forma])
+  @@map("cursos_formas_avaliacao")
+}

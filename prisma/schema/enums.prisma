@@ -149,7 +149,7 @@ enum ContaOrcamento {
 
   //Quando uma instituição paga uma bolsa para alguém, o governo exige que ela recolha um percentual adicional sobre esse valor para cobrir obrigações previdenciárias — basicamente a contribuição ao INSS patronal.
   ENCARGOS_PATRONAIS //encargos trabalhistas sobre bolsas pagas
-  
+
   EQUIPAMENTO_MATERIAL_PERMANENTE //compra de equipamento que fica no patrimonio
   MATERIAL_CONSUMO // material usado no curso
   OUTROS_SERVICOS_PF //pagamento de servicoes a pessoa fisica
