@@ -12,3 +12,5 @@ router.post('/login', validateZod(loginSchema, 'body'), AuthController.login);
 router.get('/me', authMiddleware, AuthController.me);
 
 export { router as AuthRoutes }
+
+
