@@ -1,5 +1,4 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
     // "rootDir": "./src",
@@ -9,7 +8,10 @@
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
-    "types": ["node"],
+    // Remove explicit "node" types to avoid errors when @types/node is not installed.
+    // If you need Node type definitions, install them with: npm install -D @types/node
+    // "types": ["node"],
+    "lib": ["esnext"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],

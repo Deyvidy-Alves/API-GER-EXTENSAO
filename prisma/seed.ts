@@ -12,6 +12,10 @@
 import { prisma } from '../src/lib/prisma.js'
 import { hash } from 'bcrypt'
 
+// Fix: when TypeScript lib configuration doesn't include DOM, `console` may be unknown.
+// Declare a loose global to satisfy the compiler in this seed script.
+declare const console: { log: (...args: any[]) => void; error: (...args: any[]) => void };
+
 async function main() {
 
   // ─── 1. PAPÉIS ────────────────────────────────────────────────────────────
