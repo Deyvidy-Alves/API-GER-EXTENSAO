@@ -1,32 +1,84 @@
-/*
-APENAS TEMPLATE. PODE SER ALTERADO
+import bcrypt from "bcrypt";
+import { prisma } from "../../lib/prisma.js";
 
-export async function createUserWithPerfilServidor(data: {
-  user: DadosDoUser,
-  perfilServidor: DadosDoPerfilServidor,
-  perfilProfessor?: DadosDoPerfilProfessor,
-  papel: 'DEPPI' | 'PROFESSOR'
+type StaffProfileData = {
+  siape: string;
+  matricula?: string;
+  setorSuap?: string;
+  lotacaoSiape?: string;
+  exercicioSiape?: string;
+  situacao?: "ATIVO" | "INATIVO" | "APOSENTADO" | "CEDIDO" | "AFASTADO";
+  regimeTrabalho?: "DEDICACAO_EXCLUSIVA" | "QUARENTA_HORAS" | "VINTE_HORAS";
+  jornadaTrabalho?: "INTEGRAL" | "PARCIAL" | "NOTURNO";
+  operaRaioX?: boolean;
+  inicioServicoPublico?: Date;
+  dataPosseInstituicao?: Date;
+  inicioExercicioInstituicao?: Date;
+  dataPosseCargo?: Date;
+  inicioExercicioCargo?: Date;
+  cargo?: string;
+  classeCargo?: string;
+  padrao?: string;
+  grupoCargo?: string;
+  codigoVaga?: string;
+  banco?: string;
+  agencia?: string;
+  contaCorrente?: string;
+};
+
+export async function createUserWithStaffProfile(input: {
+  nome: string;
+  email: string;
+  senha: string;
+  instituicaoId: string;
+  papel: "DEPPI" | "PROFESSOR";
+  perfilServidor: StaffProfileData;
 }) {
+  const { nome, email, senha, instituicaoId, papel, perfilServidor } = input;
+
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) {
+    throw new Error("Já existe um usuário com este email.");
+  }
+
+  const papelDb = await prisma.papel.findUnique({ where: { nome: papel } });
+  if (!papelDb) {
+    throw new Error(`Papel ${papel} não encontrado.`);
+  }
+
+  const senhaHash = await bcrypt.hash(senha, 10);
+
   return prisma.$transaction(async (tx) => {
-    const papel = await tx.papel.findUnique({ where: { nome: data.papel } })
-
-    const user = await tx.user.create({ data: data.user })
-
-    await tx.userPapel.create({
-      data: { userId: user.id, papelId: papel.id }
-    })
+    const user = await tx.user.create({
+      data: {
+        nome,
+        email,
+        senhaHash,
+        instituicaoId,
+        ativo: true,
+        papeis: {
+          create: {
+            papelId: papelDb.id,
+          },
+        },
+      },
+    });
 
     const servidor = await tx.perfilServidor.create({
-      data: { ...data.perfilServidor, userId: user.id }
-    })
+      data: {
+        userId: user.id,
+        ...perfilServidor,
+      },
+    });
 
-    if (data.perfilProfessor) {
-      await tx.perfilProfessor.create({
-        data: { ...data.perfilProfessor, perfilServidorId: servidor.id }
-      })
-    }
-
-    return user
-  })
+    return {
+      id: user.id,
+      nome: user.nome,
+      email: user.email,
+      ativo: user.ativo,
+      instituicaoId: user.instituicaoId,
+      perfilServidor: servidor,
+      roles: [papel],
+    };
+  });
 }
-*/
