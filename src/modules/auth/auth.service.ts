@@ -3,9 +3,6 @@ import { type RegisterDTO, type LoginDTO } from './auth.schema.js'
 import jwt from 'jsonwebtoken';
 import { getEnv } from '../../utils/getEnv.js';
 import bcrypt from 'bcrypt'
-
-
-
 export class AuthService {
   static async register(data: RegisterDTO) {
     const userExists = await prisma.user.findUnique({ where: {email: data.email } });
