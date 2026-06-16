@@ -1,0 +1,16 @@
+model PerfilProfessor {
+  id               String         @id @default(uuid())
+  perfilServidorId String         @unique
+  perfilServidor   PerfilServidor @relation(fields: [perfilServidorId], references: [id])
+
+  // EXCLUSIVO PROFESSOR
+  titulacao          String?
+  departamento       String?
+  nce                String?
+  disciplinaIngresso String?
+
+  // RELACOES
+  cursos CursoExtensao[]
+
+  @@map("perfis_professor")
+}

@@ -1,0 +1,9 @@
+model CursoMunicipio {
+  nome String
+
+  cursoId String
+  curso   CursoExtensao @relation(fields: [cursoId], references: [id])
+
+  @@id([cursoId, nome])
+  @@map("cursos_municipios")
+}

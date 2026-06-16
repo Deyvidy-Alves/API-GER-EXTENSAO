@@ -1,0 +1,158 @@
+enum StatusCurso {
+  RASCUNHO
+  PUBLICADO
+  EM_ANDAMENTO
+  ENCERRADO
+  CANCELADO
+}
+
+enum StatusInscricao {
+  PENDENTE
+  APROVADA
+  REJEITADA
+  CANCELADA
+  LISTA_ESPERA
+}
+
+enum TipoCurso {
+  FORMACAO_INICIAL //a partir de 160h
+  FORMACAO_CONTINUADA //mínimo de 40h
+}
+
+enum Sexo {
+  MASCULINO
+  FEMININO
+}
+
+enum CorRaca {
+  AMARELA
+  BRANCA
+  PARDA
+  INDIGENA
+  NAO_DECLARADA
+}
+
+enum RendaFamiliarPerCapita {
+  ATE_MEIO_SM
+  MEIO_A_UM_SM
+  UM_A_UM_E_MEIO_SM
+  UM_E_MEIO_A_DOIS_SM
+  DOIS_E_MEIO_A_TRES_SM
+  ACIMA_DE_TRES_SM
+}
+
+// ENUMS PARA USER
+enum EstadoCivil {
+  SOLTEIRO
+  CASADO
+  DIVORCIADO
+  VIUVO
+  UNIAO_ESTAVEL
+}
+
+enum GrupoSanguineo {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+}
+
+enum SituacaoServidor {
+  ATIVO
+  INATIVO
+  APOSENTADO
+  CEDIDO
+  AFASTADO
+}
+
+enum RegimeTrabalho {
+  DEDICACAO_EXCLUSIVA
+  QUARENTA_HORAS
+  VINTE_HORAS
+}
+
+enum JornadaTrabalho {
+  INTEGRAL
+  PARCIAL
+  NOTURNO
+}
+
+// RELACIONADO AOS CURSOS DE EXTENSAO
+enum TipoAcao {
+  CURSO
+  EVENTO
+  PROJETO
+  PROGRAMA
+}
+
+enum LocalAtuacao {
+  URBANO
+  RURAL
+}
+
+enum ModeloOferta {
+  PRESENCIAL
+  ONLINE
+  HIBRIDO
+}
+
+enum FormaAvaliacao {
+  PARTICIPACAO
+  QUESTIONARIO
+  DEBATE
+  FREQUENCIA
+  TESTE_OBJETIVO
+  PROVA
+  TRABALHOS_ESCRITOS
+}
+
+enum FormaDivulgacao {
+  AUDIO
+  CARTAZ
+  EMAIL
+  SISTEMA_ACADEMICO
+  REDES_SOCIAIS
+  CONVITE
+  ARTICULACOES_INSTITUCIONAIS
+}
+
+enum AtividadeRealizada {
+  MINICURSO
+  PALESTRA
+  WORKSHOP
+  SEMINARIO
+  OFICINA
+  EXPOSICAO
+  HACKATHON
+}
+
+enum CategoriaEquipe {
+  COORDENADOR
+  INTEGRANTE
+}
+
+enum VinculoEquipe {
+  DOCENTE_IFCE
+  TECNICO_IFCE
+  DISCENTE_IFCE
+  EXTERNO
+}
+
+enum ContaOrcamento {
+  BOLSA_AUXILIO_ESTUDANTES
+  BOLSA_AUXILIO_PESQUISADORES
+  DIARIAS_PESSOAL_CIVIL
+
+  //Quando uma instituição paga uma bolsa para alguém, o governo exige que ela recolha um percentual adicional sobre esse valor para cobrir obrigações previdenciárias — basicamente a contribuição ao INSS patronal.
+  ENCARGOS_PATRONAIS //encargos trabalhistas sobre bolsas pagas
+
+  EQUIPAMENTO_MATERIAL_PERMANENTE //compra de equipamento que fica no patrimonio
+  MATERIAL_CONSUMO // material usado no curso
+  OUTROS_SERVICOS_PF //pagamento de servicoes a pessoa fisica
+  OUTROS_SERVICOES_PJ // pagamento de servicos a pessoa juridica
+  PASSAGENS_LOCOMOCAO
+}

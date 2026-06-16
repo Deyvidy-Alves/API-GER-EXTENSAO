@@ -1,0 +1,24 @@
+model PerfilAluno {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  // VINCULO ACADEMICO 
+  matricula      String @unique
+  cursoGraduacao String
+  semestre       Int?
+
+  // SOCIOECONOMICO
+  grauInstrucao          String?
+  profissao              String?
+  rendaFamiliarPerCapita RendaFamiliarPerCapita?
+  numPessoasFamilia      Int?
+
+  // CONTATO
+  telefoneComercial String?
+  telefoneCelular   String?
+
+  inscricoes Inscricao[]
+
+  @@map("perfis_alunos")
+}
