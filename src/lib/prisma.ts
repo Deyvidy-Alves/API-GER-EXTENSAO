@@ -5,6 +5,7 @@ import { getEnv } from "../utils/getEnv.js";
 
 const adapter = new PrismaMariaDb({
   host: getEnv("DATABASE_HOST"),
+  port: Number(process.env.DATABASE_PORT) || 3306,
   user: getEnv("DATABASE_USER"),
   password: getEnv("DATABASE_PASSWORD"),
   database: getEnv("DATABASE_NAME"),
