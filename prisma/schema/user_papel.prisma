@@ -1,0 +1,10 @@
+model UserPapel {
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  papelId String
+  papel   Papel  @relation(fields: [papelId], references: [id])
+
+  @@id([userId, papelId])
+  @@map("users_papeis")
+}

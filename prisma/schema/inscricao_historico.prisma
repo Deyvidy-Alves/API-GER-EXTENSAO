@@ -1,0 +1,15 @@
+model InscricaoHistorico {
+  id             String          @id @default(uuid())
+  statusAnterior StatusInscricao
+  statusNovo     StatusInscricao
+  observacao     String? //serve para justificar uma rejeição ou cancelamento de curso, por ex.
+  alteradoEm     DateTime        @default(now())
+
+  inscricaoId String
+  inscricao   Inscricao @relation(fields: [inscricaoId], references: [id])
+
+  alteradoPorId String
+  alteradoPor   User   @relation(fields: [alteradoPorId], references: [id])
+
+  @@map("inscricoes_historico")
+}
