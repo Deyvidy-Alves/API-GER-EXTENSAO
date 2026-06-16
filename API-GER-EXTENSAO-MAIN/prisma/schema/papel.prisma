@@ -1,9 +1,0 @@
-model Papel {
-  id   String @id @default(uuid())
-  nome String @unique //ex: "ADMIN", "professor", "deppi"
-
-  permissoes PapelPermissao[] //uma permissao pode pertencer a varios papeis
-  usuarios   UserPapel[] //um papel pode ter uma lista de usuarios
-
-  @@map("papeis")
-}
