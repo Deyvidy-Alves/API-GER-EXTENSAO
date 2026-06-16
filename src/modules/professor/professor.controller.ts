@@ -45,7 +45,7 @@ export class ProfessorController {
   static async detalharCurso(req: Request, res: Response) {
     try {
       const userId = req.user!.sub;
-      const { id } = req.params;
+      const { id } = req.params as { id: string };
       const curso = await ProfessorService.detalharCurso(userId, id);
       res.status(200).json(curso);
     } catch (error: any) {
@@ -56,7 +56,7 @@ export class ProfessorController {
   static async listarInscricoesDoCurso(req: Request, res: Response) {
     try {
       const userId = req.user!.sub;
-      const { id } = req.params;
+      const { id } = req.params as { id: string };
       const inscricoes = await ProfessorService.listarInscricoesDoCurso(userId, id);
       res.status(200).json(inscricoes);
     } catch (error: any) {

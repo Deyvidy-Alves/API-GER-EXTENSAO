@@ -63,14 +63,17 @@ export class ProfessorService {
   static async atualizarPerfil(userId: string, data: AtualizarPerfilDTO) {
     const perfilProfessor = await this.getPerfilProfessor(userId);
 
+    // build update object excluding undefined properties to satisfy exactOptionalPropertyTypes
+    const updateData: Record<string, any> = {};
+    if (data.titulacao !== undefined) updateData.titulacao = data.titulacao;
+    if (data.departamento !== undefined) updateData.departamento = data.departamento;
+    if (data.nce !== undefined) updateData.nce = data.nce;
+    if (data.disciplinaIngresso !== undefined)
+      updateData.disciplinaIngresso = data.disciplinaIngresso;
+
     const atualizado = await prisma.perfilProfessor.update({
       where: { id: perfilProfessor.id },
-      data: {
-        titulacao: data.titulacao,
-        departamento: data.departamento,
-        nce: data.nce,
-        disciplinaIngresso: data.disciplinaIngresso,
-      },
+      data: updateData,
       select: {
         id: true,
         titulacao: true,
@@ -104,17 +107,17 @@ export class ProfessorService {
         modeloOferta: data.modeloOferta,
         cargaHoraria: data.cargaHoraria,
         dataInicio: data.dataInicio,
-        dataFim: data.dataFim,
-        minBeneficiados: data.minBeneficiados,
-        maxBeneficiados: data.maxBeneficiados,
-        fomento: data.fomento,
-        programaInstitucional: data.programaInstitucional,
-        apresentacao: data.apresentacao,
-        justificativa: data.justificativa,
-        publicoAlvo: data.publicoAlvo,
-        objetivoGeral: data.objetivoGeral,
-        objetivosEspecificos: data.objetivosEspecificos,
-        metodologia: data.metodologia,
+        dataFim: data.dataFim ?? null,
+        minBeneficiados: data.minBeneficiados ?? null,
+        maxBeneficiados: data.maxBeneficiados ?? null,
+        fomento: data.fomento ?? null,
+        programaInstitucional: data.programaInstitucional ?? null,
+        apresentacao: data.apresentacao ?? null,
+        justificativa: data.justificativa ?? null,
+        publicoAlvo: data.publicoAlvo ?? null,
+        objetivoGeral: data.objetivoGeral ?? null,
+        objetivosEspecificos: data.objetivosEspecificos ?? null,
+        metodologia: data.metodologia ?? null,
         professorId: perfilProfessor.id,
         instituicaoId: user.instituicaoId,
       },

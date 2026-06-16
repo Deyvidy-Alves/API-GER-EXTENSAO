@@ -10,7 +10,6 @@ app.use('/autenticacao', AuthRoutes);
 app.use('/perfil', ProfileRoutes);
 app.use("/deppi", DeppiRoutes);
 
-
 app.get('/health', (req, res) => {
 	res.status(200).json({
 		status: 'ok',
