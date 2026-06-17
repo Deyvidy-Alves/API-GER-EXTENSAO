@@ -119,7 +119,5 @@ A API vai rodar em `http://localhost:3000`.
 
 | Equipe | Integrantes |
 |---|---|
-| 01 | Anderson, Eduardo Guilherme, Gideão, Guilherme Oliveira, Ian |
-| 02 | Gabrielle, Carlos Henrique, Diego, Henrique, Marcus, Pedro Henrique |
 | 03 | Deyvidy, Tyson, Guilherme Leite, Ruan |
-| 04 | Rian, Rafael, Gabriela, Pablo |
+
