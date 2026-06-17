@@ -30,9 +30,29 @@ export class SubService {
     });
     const status = totalAccepted >= course.maxBeneficiados ? 'LISTA_ESPERA' : 'PENDENTE';
 
-    return prisma.inscricao.create({
-      data: { alunoId: userId, cursoId: data.cursoId, status }
-    })
+    /*return prisma.inscricao.create({
+      data: { alunoId: profileStudent.id, cursoId: data.cursoId, status }
+    })*/
+    return prisma.$transaction(async (tx: any) => {
+      const sub = await tx.inscricao.create({
+        data: {
+          alunoId: profileStudent.id,
+          cursoId: data.cursoId,
+          status,
+        }
+      });
 
+      await tx.inscricaoHistorico.create({
+        data: {
+          inscricaoId: sub.id,
+          alteradoPorId: userId,
+          statusAnterior: status,
+          statusNovo: status,
+          observacao: 'Inscrição realizada por aluno'
+        }
+      });
+
+      return sub;
+    })
   }
 };
