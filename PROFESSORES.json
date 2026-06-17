@@ -1,0 +1,240 @@
+{
+  "info": {
+    "_postman_id": "8e07edd3-9880-43d4-b6eb-acf5aa510c09",
+    "name": "COLLECTION API-GER",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47079007"
+  },
+  "item": [
+    {
+      "name": "login",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODEyMzhjZi1hZTBmLTQ5NmYtYmNkOC1iOTEwOTQ1OGVjYTYiLCJuYW1lIjoiUHJvZmVzc29yIFRlc3RlIiwiZW1haWwiOiJwcm9mZXNzb3JAaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJQUk9GRVNTT1IiXSwicGVybWlzc2lvbnMiOlsiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpyZWFkIl0sImlhdCI6MTc4MTU2MzQxNSwiZXhwIjoxNzgyMTY4MjE1fQ.12UYlTVFDcFKdAoDLZdoXnWgDa-k4-iJFQxPiwPM3hg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"professor@ifce.edu.br\",\r\n  \"senha\": \"professor123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/autenticacao/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "autenticacao",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "perfil professor",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODEyMzhjZi1hZTBmLTQ5NmYtYmNkOC1iOTEwOTQ1OGVjYTYiLCJuYW1lIjoiUHJvZmVzc29yIFRlc3RlIiwiZW1haWwiOiJwcm9mZXNzb3JAaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJQUk9GRVNTT1IiXSwicGVybWlzc2lvbnMiOlsiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpyZWFkIl0sImlhdCI6MTc4MTU2MzQxNSwiZXhwIjoxNzgyMTY4MjE1fQ.12UYlTVFDcFKdAoDLZdoXnWgDa-k4-iJFQxPiwPM3hg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/professor/perfil",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "professor",
+            "perfil"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "alterar informaeções perfil professor",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODEyMzhjZi1hZTBmLTQ5NmYtYmNkOC1iOTEwOTQ1OGVjYTYiLCJuYW1lIjoiUHJvZmVzc29yIFRlc3RlIiwiZW1haWwiOiJwcm9mZXNzb3JAaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJQUk9GRVNTT1IiXSwicGVybWlzc2lvbnMiOlsiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpyZWFkIl0sImlhdCI6MTc4MTU2MzQxNSwiZXhwIjoxNzgyMTY4MjE1fQ.12UYlTVFDcFKdAoDLZdoXnWgDa-k4-iJFQxPiwPM3hg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"titulacao\": \"Mestre\",\r\n  \"departamento\": \"Computação\",\r\n  \"nce\": \"NCE-01\",\r\n  \"disciplinaIngresso\": \"Algoritmos\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/professor/perfil",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "professor",
+            "perfil"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "criar curso",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODEyMzhjZi1hZTBmLTQ5NmYtYmNkOC1iOTEwOTQ1OGVjYTYiLCJuYW1lIjoiUHJvZmVzc29yIFRlc3RlIiwiZW1haWwiOiJwcm9mZXNzb3JAaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJQUk9GRVNTT1IiXSwicGVybWlzc2lvbnMiOlsiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpyZWFkIl0sImlhdCI6MTc4MTU2MzQxNSwiZXhwIjoxNzgyMTY4MjE1fQ.12UYlTVFDcFKdAoDLZdoXnWgDa-k4-iJFQxPiwPM3hg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"titulo\": \"Introdução à Programação Web\",\r\n  \"tipoAcao\": \"CURSO\",\r\n  \"tipo\": \"FORMACAO_CONTINUADA\",\r\n  \"areaTematica\": \"Tecnologia da Informação\",\r\n  \"linhaExtensao\": \"Desenvolvimento de Software\",\r\n  \"localAtuacao\": \"URBANO\",\r\n  \"modeloOferta\": \"PRESENCIAL\",\r\n  \"cargaHoraria\": 40,\r\n  \"dataInicio\": \"2026-07-01\",\r\n  \"dataFim\": \"2026-08-01\",\r\n  \"minBeneficiados\": 10,\r\n  \"maxBeneficiados\": 30,\r\n  \"apresentacao\": \"Curso voltado para iniciantes em programação web.\",\r\n  \"justificativa\": \"Alta demanda por profissionais da área.\",\r\n  \"publicoAlvo\": \"Estudantes de graduação\",\r\n  \"objetivoGeral\": \"Capacitar alunos em desenvolvimento web básico.\",\r\n  \"objetivosEspecificos\": \"Ensinar HTML, CSS e JavaScript.\",\r\n  \"metodologia\": \"Aulas expositivas e práticas em laboratório.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/professor/cursos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "professor",
+            "cursos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "listar cursos",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODEyMzhjZi1hZTBmLTQ5NmYtYmNkOC1iOTEwOTQ1OGVjYTYiLCJuYW1lIjoiUHJvZmVzc29yIFRlc3RlIiwiZW1haWwiOiJwcm9mZXNzb3JAaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJQUk9GRVNTT1IiXSwicGVybWlzc2lvbnMiOlsiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpyZWFkIl0sImlhdCI6MTc4MTU2MzQxNSwiZXhwIjoxNzgyMTY4MjE1fQ.12UYlTVFDcFKdAoDLZdoXnWgDa-k4-iJFQxPiwPM3hg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/professor/cursos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "professor",
+            "cursos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "detalhar curso",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwODEyMzhjZi1hZTBmLTQ5NmYtYmNkOC1iOTEwOTQ1OGVjYTYiLCJuYW1lIjoiUHJvZmVzc29yIFRlc3RlIiwiZW1haWwiOiJwcm9mZXNzb3JAaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJQUk9GRVNTT1IiXSwicGVybWlzc2lvbnMiOlsiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpyZWFkIl0sImlhdCI6MTc4MTU2MzQxNSwiZXhwIjoxNzgyMTY4MjE1fQ.12UYlTVFDcFKdAoDLZdoXnWgDa-k4-iJFQxPiwPM3hg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/professor/cursos/80770483-11e7-4145-ba20-f8b94139c294",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "professor",
+            "cursos",
+            "80770483-11e7-4145-ba20-f8b94139c294"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "listar inscrições",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/professor/cursos/80770483-11e7-4145-ba20-f8b94139c294/inscricoes",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "professor",
+            "cursos",
+            "80770483-11e7-4145-ba20-f8b94139c294",
+            "inscricoes"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

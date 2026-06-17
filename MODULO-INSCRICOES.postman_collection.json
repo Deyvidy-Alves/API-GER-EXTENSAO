@@ -1,0 +1,58 @@
+{
+  "info": {
+    "_postman_id": "77c6811f-4057-4318-9c7b-1256a2bdd1be",
+    "name": "MODULO-INSCRICOES",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54143453",
+    "_collection_link": "https://go.postman.co/collection/54143453-77c6811f-4057-4318-9c7b-1256a2bdd1be?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "http://localhost:3000/inscricao/registrar-inscricao",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cursoId\": \"80770483-11e7-4145-ba20-f8b94139c294\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/inscricao/registrar-inscricao",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "inscricao",
+            "registrar-inscricao"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:3000/inscricao/registrar-inscricao",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}

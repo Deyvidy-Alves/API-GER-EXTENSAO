@@ -1,0 +1,181 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: API-GER-EXTENSAO
+meta:
+  id: wrk_ad13f0b4a85e457f9238e700d8728936
+  created: 1781620264246
+  modified: 1781620264246
+  description: ""
+collection:
+  - url: http://localhost:3000/deppi
+    name: Requisição de login
+    meta:
+      id: req_6c20a99c48264eceb5c087a650895ad6
+      created: 1781620270382
+      modified: 1781647860660
+      isPrivate: false
+      description: ""
+      sortKey: -1781620270382
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "admin@ifce.edu.br",
+          "senha": "admin123"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.6.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3000/deppi
+    name: Login usuario deppi
+    meta:
+      id: req_bf3cbfa30d9e409fab6f06a708a145eb
+      created: 1781620474256
+      modified: 1781647893800
+      isPrivate: false
+      description: ""
+      sortKey: -1781620474256
+    method: GET
+    headers:
+      - name: authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTUyMGI2YS1jZmViLTRiMTAtOWQzMy0zNzczYjI3MjQ1NDIiLCJuYW1lIjoiQWRtaW5pc3RyYWRvciIsImVtYWlsIjoiYWRtaW5AaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJBRE1JTiJdLCJwZXJtaXNzaW9ucyI6WyJpbnNjcmljYW86Y3JlYXRlIiwiYWx1bm86dXBkYXRlIiwiYWx1bm86Y3JlYXRlIiwicHJvZmVzc29yOnVwZGF0ZSIsInJlbGF0b3JpbzpjcmVhdGUiLCJpbnNjcmljYW86ZGVsZXRlIiwiY3Vyc286Y3JlYXRlIiwiZGVwcGk6ZGVsZXRlIiwicmVsYXRvcmlvOnJlYWQiLCJpbnNjcmljYW86dXBkYXRlIiwiYWx1bm86ZGVsZXRlIiwiaW5zY3JpY2FvOnJlYWQiLCJwcm9mZXNzb3I6Y3JlYXRlIiwiZGVwcGk6Y3JlYXRlIiwiZGVwcGk6dXBkYXRlIiwicHJvZmVzc29yOnJlYWQiLCJjdXJzbzp1cGRhdGUiLCJkZXBwaTpyZWFkIiwiYWx1bm86cmVhZCIsInByb2Zlc3NvcjpkZWxldGUiLCJjdXJzbzpyZWFkIiwiY3Vyc286ZGVsZXRlIl0sImlhdCI6MTc4MTYyMDM2OCwiZXhwIjoxNzgyMjI1MTY4fQ.S2vyAgiXHzqMyxgk2-up3pdbidQcuu6bRIGzj7Ao8lM
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3000/deppi/a2e41237-4476-4caf-8ef6-0496004acd66
+    name: Buscar por ID
+    meta:
+      id: req_539200541f4443f0a1125f9401a8bc5e
+      created: 1781647450417
+      modified: 1781648038160
+      isPrivate: false
+      description: ""
+      sortKey: -1781647450417
+    method: GET
+    headers:
+      - name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTUyMGI2YS1jZmViLTRiMTAtOWQzMy0zNzczYjI3MjQ1NDIiLCJuYW1lIjoiQWRtaW5pc3RyYWRvciIsImVtYWlsIjoiYWRtaW5AaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJBRE1JTiJdLCJwZXJtaXNzaW9ucyI6WyJpbnNjcmljYW86Y3JlYXRlIiwiYWx1bm86dXBkYXRlIiwiYWx1bm86Y3JlYXRlIiwicHJvZmVzc29yOnVwZGF0ZSIsInJlbGF0b3JpbzpjcmVhdGUiLCJpbnNjcmljYW86ZGVsZXRlIiwiY3Vyc286Y3JlYXRlIiwiZGVwcGk6ZGVsZXRlIiwicmVsYXRvcmlvOnJlYWQiLCJpbnNjcmljYW86dXBkYXRlIiwiYWx1bm86ZGVsZXRlIiwiaW5zY3JpY2FvOnJlYWQiLCJwcm9mZXNzb3I6Y3JlYXRlIiwiZGVwcGk6Y3JlYXRlIiwiZGVwcGk6dXBkYXRlIiwicHJvZmVzc29yOnJlYWQiLCJjdXJzbzp1cGRhdGUiLCJkZXBwaTpyZWFkIiwiYWx1bm86cmVhZCIsInByb2Zlc3NvcjpkZWxldGUiLCJjdXJzbzpyZWFkIiwiY3Vyc286ZGVsZXRlIl0sImlhdCI6MTc4MTYyMDM2OCwiZXhwIjoxNzgyMjI1MTY4fQ.S2vyAgiXHzqMyxgk2-up3pdbidQcuu6bRIGzj7Ao8lM
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3000/deppi
+    name: Novo usuário
+    meta:
+      id: req_b59c142f7c014bd78f5107964604e6f7
+      created: 1781647685437
+      modified: 1781647954844
+      isPrivate: false
+      description: ""
+      sortKey: -1781647685437
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nome": "Novo DEPPI",
+          "email": "novo.deppi@ifce.edu.br",
+          "senha": "12345678",
+          "instituicaoId": "d1d499da-03dc-415b-b402-88b72a6b5b8c",
+          "perfilServidor": {
+            "siape": "9999999",
+            "matricula": "SRV-999",
+            "setorSuap": "DEPPI",
+            "lotacaoSiape": "IFCE-CED",
+            "situacao": "ATIVO",
+            "regimeTrabalho": "DEDICACAO_EXCLUSIVA",
+            "jornadaTrabalho": "INTEGRAL",
+            "cargo": "Técnico Administrativo",
+            "inicioServicioPublico": "2020-01-01",
+            "dataPosseInstituicao": "2020-02-01"
+          }
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTUyMGI2YS1jZmViLTRiMTAtOWQzMy0zNzczYjI3MjQ1NDIiLCJuYW1lIjoiQWRtaW5pc3RyYWRvciIsImVtYWlsIjoiYWRtaW5AaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJBRE1JTiJdLCJwZXJtaXNzaW9ucyI6WyJpbnNjcmljYW86Y3JlYXRlIiwiYWx1bm86dXBkYXRlIiwiYWx1bm86Y3JlYXRlIiwicHJvZmVzc29yOnVwZGF0ZSIsInJlbGF0b3JpbzpjcmVhdGUiLCJpbnNjcmljYW86ZGVsZXRlIiwiY3Vyc286Y3JlYXRlIiwiZGVwcGk6ZGVsZXRlIiwicmVsYXRvcmlvOnJlYWQiLCJpbnNjcmljYW86dXBkYXRlIiwiYWx1bm86ZGVsZXRlIiwiaW5zY3JpY2FvOnJlYWQiLCJwcm9mZXNzb3I6Y3JlYXRlIiwiZGVwcGk6Y3JlYXRlIiwiZGVwcGk6dXBkYXRlIiwicHJvZmVzc29yOnJlYWQiLCJjdXJzbzp1cGRhdGUiLCJkZXBwaTpyZWFkIiwiYWx1bm86cmVhZCIsInByb2Zlc3NvcjpkZWxldGUiLCJjdXJzbzpyZWFkIiwiY3Vyc286ZGVsZXRlIl0sImlhdCI6MTc4MTYyMDM2OCwiZXhwIjoxNzgyMjI1MTY4fQ.S2vyAgiXHzqMyxgk2-up3pdbidQcuu6bRIGzj7Ao8lM
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3000/deppi/a2e41237-4476-4caf-8ef6-0496004acd66
+    name: Alterar usuário
+    meta:
+      id: req_ed9d9d60553343538dbadbc4ab646f9f
+      created: 1781647980854
+      modified: 1781648126101
+      isPrivate: false
+      description: ""
+      sortKey: -1781647980854
+    method: PATCH
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nome": "DEPPI Atualizado"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTUyMGI2YS1jZmViLTRiMTAtOWQzMy0zNzczYjI3MjQ1NDIiLCJuYW1lIjoiQWRtaW5pc3RyYWRvciIsImVtYWlsIjoiYWRtaW5AaWZjZS5lZHUuYnIiLCJyb2xlcyI6WyJBRE1JTiJdLCJwZXJtaXNzaW9ucyI6WyJpbnNjcmljYW86Y3JlYXRlIiwiYWx1bm86dXBkYXRlIiwiYWx1bm86Y3JlYXRlIiwicHJvZmVzc29yOnVwZGF0ZSIsInJlbGF0b3JpbzpjcmVhdGUiLCJpbnNjcmljYW86ZGVsZXRlIiwiY3Vyc286Y3JlYXRlIiwiZGVwcGk6ZGVsZXRlIiwicmVsYXRvcmlvOnJlYWQiLCJpbnNjcmljYW86dXBkYXRlIiwiYWx1bm86ZGVsZXRlIiwiaW5zY3JpY2FvOnJlYWQiLCJwcm9mZXNzb3I6Y3JlYXRlIiwiZGVwcGk6Y3JlYXRlIiwiZGVwcGk6dXBkYXRlIiwicHJvZmVzc29yOnJlYWQiLCJjdXJzbzp1cGRhdGUiLCJkZXBwaTpyZWFkIiwiYWx1bm86cmVhZCIsInByb2Zlc3NvcjpkZWxldGUiLCJjdXJzbzpyZWFkIiwiY3Vyc286ZGVsZXRlIl0sImlhdCI6MTc4MTYyMDM2OCwiZXhwIjoxNzgyMjI1MTY4fQ.S2vyAgiXHzqMyxgk2-up3pdbidQcuu6bRIGzj7Ao8lM
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_9947d90ab5864aab9e7f8f3fbdf03870fac8c053
+    created: 1781620264250
+    modified: 1781620264250
+environments:
+  name: Base Environment
+  meta:
+    id: env_9947d90ab5864aab9e7f8f3fbdf03870fac8c053
+    created: 1781620264249
+    modified: 1781620264249
+    isPrivate: false
