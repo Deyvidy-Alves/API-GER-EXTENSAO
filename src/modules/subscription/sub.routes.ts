@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { checkPermission } from "../../middlewares/authorization.middleware.js";
 import { validateZod } from "../../middlewares/validateZod.middleware.js";
-import { CreateSubSchema } from "./sub.schema.js";
+import { CreateSubSchema, UpdateStatusSchema } from "./sub.schema.js";
 import { SubController } from "./sub.controllers.js";
 
 const router = Router();
@@ -29,6 +29,30 @@ router.get(
   authMiddleware,
   checkPermission('inscricao', 'read'),
   SubController.listByCourse
+);
+
+router.patch(
+  "/:id/aprovar",
+  authMiddleware,
+  checkPermission('inscricao', 'update'),
+  validateZod(UpdateStatusSchema, 'body'),
+  SubController.approve
+);
+
+router.patch(
+  "/:id/rejeitar",
+  authMiddleware,
+  checkPermission('inscricao', 'update'),
+  validateZod(UpdateStatusSchema, 'body'),
+  SubController.reject
+);
+
+router.patch(
+  "/:id/cancelar",
+  authMiddleware,
+  checkPermission('inscricao', 'update'),
+  validateZod(UpdateStatusSchema, 'body'),
+  SubController.cancel
 );
 
 export { router as SubRoutes }
