@@ -91,4 +91,91 @@ export class SubService {
       orderBy: { inscricaoEm: 'desc' },
     });
   }
+
+  static async updateStatus(
+    subId: string,
+    newStatus: 'APROVADA' | 'REJEITADA' | 'CANCELADA',
+    userId: string,
+    roles: string[],
+    observacao?: string
+  ) {
+    return prisma.$transaction(async (tx: any) => {
+      const sub = await tx.inscricao.findUnique({
+        where: { id: subId },
+        include: { curso: true },
+      });
+      if (!sub) throw new Error('Inscrição não encontrada');
+
+      // autorização: DEPPI ou professor dono do curso
+      const isDeppi = roles.includes('DEPPI');
+      if (!isDeppi) {
+        const staffProfile = await tx.perfilServidor.findUnique({ where: { userId } });
+        const professorProfile = staffProfile
+          ? await tx.perfilProfessor.findUnique({ where: { perfilServidorId: staffProfile.id } })
+          : null;
+        if (!professorProfile || professorProfile.id !== sub.curso.professorId) {
+          throw new Error('Você não tem permissão para alterar esta inscrição');
+        }
+      }
+
+      // trava: impede transição pro mesmo status atual
+      if (sub.status === newStatus) {
+        throw new Error(`Inscrição já está com status ${newStatus}`);
+      }
+
+      // se for aprovar, checar vaga
+      if (newStatus === 'APROVADA') {
+        const totalAceitas = await tx.inscricao.count({
+          where: { cursoId: sub.cursoId, status: 'APROVADA' },
+        });
+        if (totalAceitas >= sub.curso.maxBeneficiados) {
+          throw new Error('Não há vagas disponíveis para aprovar esta inscrição');
+        }
+      }
+
+      const statusAnterior = sub.status;
+
+      const updated = await tx.inscricao.update({
+        where: { id: subId },
+        data: { status: newStatus },
+      });
+
+      await tx.inscricaoHistorico.create({
+        data: {
+          inscricaoId: subId,
+          alteradoPorId: userId,
+          statusAnterior,
+          statusNovo: newStatus,
+          observacao: observacao ?? `Status alterado para ${newStatus}`,
+        },
+      });
+
+      // promoção automática da lista de espera
+      if ((newStatus === 'CANCELADA' || newStatus === 'REJEITADA') && statusAnterior === 'APROVADA') {
+        const proximo = await tx.inscricao.findFirst({
+          where: { cursoId: sub.cursoId, status: 'LISTA_ESPERA' },
+          orderBy: { inscricaoEm: 'asc' },
+        });
+
+        if (proximo) {
+          await tx.inscricao.update({
+            where: { id: proximo.id },
+            data: { status: 'PENDENTE' },
+          });
+
+          await tx.inscricaoHistorico.create({
+            data: {
+              inscricaoId: proximo.id,
+              alteradoPorId: userId,
+              statusAnterior: 'LISTA_ESPERA',
+              statusNovo: 'PENDENTE',
+              observacao: 'Promovido automaticamente da lista de espera (vaga liberada)',
+            },
+          });
+        }
+      }
+
+      return updated;
+    });
+  }
 };
