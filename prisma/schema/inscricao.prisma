@@ -11,6 +11,7 @@ model Inscricao {
   curso   CursoExtensao @relation(fields: [cursoId], references: [id])
 
   historico InscricaoHistorico[]
+  documentos InscricaoDocumento[]
 
   @@unique([alunoId, cursoId])
   @@map("inscricoes")

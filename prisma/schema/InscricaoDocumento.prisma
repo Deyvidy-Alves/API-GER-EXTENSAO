@@ -1,0 +1,16 @@
+model InscricaoDocumento {
+  id            String   @id @default(uuid())
+
+  nomeOriginal  String
+  nomeArquivo   String
+  caminho       String
+  mimeType      String
+  tamanho       Int
+
+  inscricaoId   String
+  inscricao     Inscricao @relation(fields: [inscricaoId], references: [id], onDelete: Cascade)
+
+  criadoEm      DateTime @default(now())
+
+  @@map("inscricao_documentos")
+}
