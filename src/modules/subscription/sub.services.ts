@@ -80,4 +80,15 @@ export class SubService {
       orderBy: { inscricaoEm: 'desc' },
     });
   }
+
+  static async listMine(userId: string) {
+    const studentProfile = await prisma.perfilAluno.findUnique({ where: { userId } });
+    if (!studentProfile) throw new Error('Usuário não possui perfil de aluno');
+
+    return prisma.inscricao.findMany({
+      where: { alunoId: studentProfile.id },
+      include: { curso: true },
+      orderBy: { inscricaoEm: 'desc' },
+    });
+  }
 };

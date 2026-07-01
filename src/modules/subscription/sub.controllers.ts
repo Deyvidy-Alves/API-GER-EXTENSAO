@@ -16,7 +16,7 @@ export class SubController {
     }
   } 
   
-  static async listByCourse(req: Request<{ courseId: string }>, res: Response) {
+  static async listByCourse(req: Request<{ cursoId: string }>, res: Response) {
     try {
       const userId = req.user?.sub;
       const roles = req.user?.roles ?? [];
@@ -26,14 +26,29 @@ export class SubController {
         return;
       }
 
-      const { courseId } = req.params;
-      const subs = await SubService.listByCourse(courseId, userId, roles);
+      const { cursoId } = req.params;
+      const subs = await SubService.listByCourse(cursoId, userId, roles);
       res.status(200).json(subs);
     } catch (error: any) {
       const status = error.message.includes('permissão') ? 403
         : error.message.includes('não encontrado') ? 404
         : 400;
       res.status(status).json({ error: error.message });
+    }
+  }
+
+  static async listMine(req: Request, res: Response) {
+    try {
+      const userId = req.user?.sub;
+      if (!userId) {
+        res.status(401).json({ error: 'Não autorizado' });
+        return;
+      }
+      const subs = await SubService.listMine(userId);
+      res.status(200).json(subs);
+    } catch (error: any) {
+        const status = error.message.includes('não possui perfil') ? 403 : 400;
+        res.status(status).json({ error: error.message });
     }
   }
 }

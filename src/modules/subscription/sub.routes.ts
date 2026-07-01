@@ -17,6 +17,14 @@ router.post(
 //apenas aluno pode se inscrever num curso
 
 router.get(
+  "/minhas",
+  authMiddleware,
+  checkPermission('inscricao', 'read'),
+  SubController.listMine
+);
+
+
+router.get(
   "/curso/:cursoId",
   authMiddleware,
   checkPermission('inscricao', 'read'),
