@@ -63,14 +63,16 @@ export class ProfessorService {
   static async atualizarPerfil(userId: string, data: AtualizarPerfilDTO) {
     const perfilProfessor = await this.getPerfilProfessor(userId);
 
+    const updateData = {
+      ...(data.titulacao !== undefined ? { titulacao: data.titulacao } : {}),
+      ...(data.departamento !== undefined ? { departamento: data.departamento } : {}),
+      ...(data.nce !== undefined ? { nce: data.nce } : {}),
+      ...(data.disciplinaIngresso !== undefined ? { disciplinaIngresso: data.disciplinaIngresso } : {}),
+    };
+
     const atualizado = await prisma.perfilProfessor.update({
       where: { id: perfilProfessor.id },
-      data: {
-        titulacao: data.titulacao,
-        departamento: data.departamento,
-        nce: data.nce,
-        disciplinaIngresso: data.disciplinaIngresso,
-      },
+      data: updateData,
       select: {
         id: true,
         titulacao: true,
@@ -107,7 +109,7 @@ export class ProfessorService {
         dataFim: data.dataFim,
         minBeneficiados: data.minBeneficiados,
         maxBeneficiados: data.maxBeneficiados,
-        fomento: data.fomento,
+        fomento: data.fomento ?? null,
         programaInstitucional: data.programaInstitucional,
         apresentacao: data.apresentacao,
         justificativa: data.justificativa,

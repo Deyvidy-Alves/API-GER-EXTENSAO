@@ -1,12 +1,13 @@
 import path from "path";
 import fs from "fs/promises";
-import { prisma } from "../../lib/prisma.js"; 
+import { prisma } from "../../lib/prisma.js";
 
 type AuthUser = {
-  id: string;
-  role?: string;
-  roles?: string[];
-  permissions?: string[];
+  sub: string;
+  name: string;
+  email: string;
+  roles: string[];
+  permissions: string[];
 };
 
 type UploadedFile = Express.Multer.File;
@@ -18,22 +19,15 @@ function createHttpError(message: string, statusCode: number) {
 }
 
 function getRoles(user?: AuthUser) {
-  const roles = [
-    ...(user?.roles ?? []),
-    user?.role ?? "",
-  ]
-    .filter(Boolean)
-    .map((r) => String(r).toUpperCase());
-
-  return [...new Set(roles)];
+  return [...new Set((user?.roles ?? []).map((r) => String(r).toUpperCase()))];
 }
 
 async function getInscricao(inscricaoId: string) {
   return prisma.inscricao.findUnique({
     where: { id: inscricaoId },
     include: {
-      curso: true,
       aluno: true,
+      curso: true,
     },
   });
 }
@@ -46,17 +40,28 @@ async function canAccessInscricao(user: AuthUser, inscricao: any) {
   }
 
   if (roles.includes("ALUNO")) {
-    return inscricao.alunoId === user.id;
+    const perfilAluno = await prisma.perfilAluno.findUnique({
+      where: { userId: user.sub },
+    });
+
+    if (!perfilAluno) {
+      return false;
+    }
+
+    return perfilAluno.id === inscricao.alunoId;
   }
 
   if (roles.includes("PROFESSOR")) {
-    const professorId =
-      inscricao.curso?.professorId ??
-      inscricao.curso?.professor?.id ??
-      inscricao.curso?.userId ??
-      inscricao.curso?.responsavelId;
+    const curso = inscricao.curso;
 
-    return professorId === user.id;
+    const professorUserId =
+      curso?.professorId ??
+      curso?.responsavelId ??
+      curso?.userId ??
+      curso?.idProfessor ??
+      null;
+
+    return professorUserId === user.sub;
   }
 
   return false;
@@ -71,8 +76,12 @@ function documentToResponse(doc: any) {
     mimeType: doc.mimeType,
     tamanho: doc.tamanho,
     criadoEm: doc.criadoEm,
-    downloadUrl: `/inscricao/${doc.inscricaoId}/documentos/${doc.id}/arquivo`,
+    url: `/inscricao/${doc.inscricaoId}/documentos/${doc.id}/arquivo`,
   };
+}
+
+async function removeUploadedFiles(files: UploadedFile[]) {
+  await Promise.allSettled(files.map((file) => fs.unlink(file.path)));
 }
 
 async function uploadDocuments(
@@ -87,33 +96,43 @@ async function uploadDocuments(
   const inscricao = await getInscricao(inscricaoId);
 
   if (!inscricao) {
+    await removeUploadedFiles(files);
     throw createHttpError("Inscrição não encontrada", 404);
   }
 
   const allowed = await canAccessInscricao(user, inscricao);
 
   if (!allowed) {
-    throw createHttpError("Sem permissão para anexar documentos nesta inscrição", 403);
+    await removeUploadedFiles(files);
+    throw createHttpError(
+      "Sem permissão para anexar documentos nesta inscrição",
+      403
+    );
   }
 
-  const created = await prisma.$transaction(
-    files.map((file) =>
-      prisma.inscricaoDocumento.create({
-        data: {
-          nomeOriginal: file.originalname,
-          nomeArquivo: file.filename,
-          caminho: path
-            .join("uploads", "inscricoes", inscricaoId, file.filename)
-            .replace(/\\/g, "/"),
-          mimeType: file.mimetype,
-          tamanho: file.size,
-          inscricaoId,
-        },
-      })
-    )
-  );
+  try {
+    const created = await prisma.$transaction(
+      files.map((file) =>
+        prisma.inscricaoDocumento.create({
+          data: {
+            nomeOriginal: file.originalname,
+            nomeArquivo: file.filename,
+            caminho: path
+              .join("uploads", "inscricoes", inscricaoId, file.filename)
+              .replace(/\\/g, "/"),
+            mimeType: file.mimetype,
+            tamanho: file.size,
+            inscricaoId,
+          },
+        })
+      )
+    );
 
-  return created.map(documentToResponse);
+    return created.map(documentToResponse);
+  } catch (error) {
+    await removeUploadedFiles(files);
+    throw error;
+  }
 }
 
 async function listDocuments(inscricaoId: string, user: AuthUser) {
@@ -126,7 +145,10 @@ async function listDocuments(inscricaoId: string, user: AuthUser) {
   const allowed = await canAccessInscricao(user, inscricao);
 
   if (!allowed) {
-    throw createHttpError("Sem permissão para visualizar documentos desta inscrição", 403);
+    throw createHttpError(
+      "Sem permissão para visualizar documentos desta inscrição",
+      403
+    );
   }
 
   const documents = await prisma.inscricaoDocumento.findMany({
