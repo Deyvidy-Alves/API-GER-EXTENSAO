@@ -32,16 +32,23 @@ async function getInscricao(inscricaoId: string) {
   });
 }
 
-async function canAccessInscricao(user: AuthUser, inscricao: any) {
+async function canAccessInscricao(
+  user: AuthUser,
+  inscricao: any
+) {
   const roles = getRoles(user);
 
+  // ADMIN e DEPPI podem tudo
   if (roles.includes("ADMIN") || roles.includes("DEPPI")) {
     return true;
   }
 
+  // ALUNO
   if (roles.includes("ALUNO")) {
     const perfilAluno = await prisma.perfilAluno.findUnique({
-      where: { userId: user.sub },
+      where: {
+        userId: user.sub,
+      },
     });
 
     if (!perfilAluno) {
@@ -51,17 +58,25 @@ async function canAccessInscricao(user: AuthUser, inscricao: any) {
     return perfilAluno.id === inscricao.alunoId;
   }
 
+  // PROFESSOR
   if (roles.includes("PROFESSOR")) {
-    const curso = inscricao.curso;
+    const perfilServidor = await prisma.perfilServidor.findUnique({
+      where: {
+        userId: user.sub,
+      },
+      include: {
+        perfilProfessor: true,
+      },
+    });
 
-    const professorUserId =
-      curso?.professorId ??
-      curso?.responsavelId ??
-      curso?.userId ??
-      curso?.idProfessor ??
-      null;
+    if (!perfilServidor?.perfilProfessor) {
+      return false;
+    }
 
-    return professorUserId === user.sub;
+    return (
+      perfilServidor.perfilProfessor.id ===
+      inscricao.curso.professorId
+    );
   }
 
   return false;
