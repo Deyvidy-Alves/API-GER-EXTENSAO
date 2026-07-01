@@ -4,7 +4,7 @@ import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { checkRole } from "../../middlewares/authorization.middleware.js";
 import { validateZod } from "../../middlewares/validateZod.middleware.js";
 import { CreateCursoSchema, UpdateCursoSchema, ListCursosQuerySchema, CursoIdParamSchema } from "./cursos.schema.js";
-
+import { uploadCurso } from "../../middlewares/uploadCurso.middleware.js";
 const router = Router();
 
 // Todas as rotas exigem autenticação
@@ -15,6 +15,12 @@ router.post(
   checkRole('DEPPI', 'PROFESSOR'),
   validateZod(CreateCursoSchema, 'body'),
   CursosController.create
+);
+router.post(
+    "/:id/imagem",
+    checkRole("DEPPI", "PROFESSOR"),
+    uploadCurso.single("imagem"),
+    CursosController.uploadImagem
 );
 
 router.get(

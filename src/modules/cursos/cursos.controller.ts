@@ -11,7 +11,28 @@ export class CursosController {
       res.status(400).json({ error: error.message });
     }
   }
+  static async uploadImagem(req: Request, res: Response) {
 
+    try {
+
+        const { id } = req.params as { id: string };
+
+        const curso = await CursosService.uploadImagem(
+            id,
+            req.file
+        );
+
+        return res.json(curso);
+
+    } catch (error: any) {
+
+        return res.status(400).json({
+            error: error.message
+        });
+
+    }
+
+}
   static async list(req: Request, res: Response) {
     try {
       const cursos = await CursosService.listCursos(req.query as any);

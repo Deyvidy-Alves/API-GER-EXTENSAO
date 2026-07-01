@@ -1,52 +1,42 @@
 model CursoExtensao {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-
-  // IDENTIFICACAO
-  titulo        String
-  tipoAcao      TipoAcao
-  tipo          TipoCurso    @default(FORMACAO_CONTINUADA) // FormacaoInicial ≥160h | FormacaoContinuada ≥40h
-  areaTematica  String
-  linhaExtensao String
-  localAtuacao  LocalAtuacao
-  modeloOferta  ModeloOferta
-  status        StatusCurso  @default(RASCUNHO)
-
-  // DATAS, VAGAS, CARGA HORARIA
-  cargaHoraria    Int
-  dataInicio      DateTime
-  dataFim         DateTime
-  minBeneficiados Int
-  maxBeneficiados Int
-
-  // METADOS INSTITUCIONAIS
+  id                    String                 @id @default(uuid())
+  titulo                String
+  cargaHoraria          Int
+  dataInicio            DateTime
+  dataFim               DateTime
+  status                StatusCurso            @default(RASCUNHO)
+  createdAt             DateTime               @default(now())
+  professorId           String
+  instituicaoId         String
+  tipo                  TipoCurso              @default(FORMACAO_CONTINUADA)
+  apresentacao          String                 @db.Text
+  areaTematica          String
   fomento               String?
+  justificativa         String                 @db.Text
+  linhaExtensao         String
+  localAtuacao          LocalAtuacao
+  maxBeneficiados       Int
+  metodologia           String                 @db.Text
+  minBeneficiados       Int
+  modeloOferta          ModeloOferta
+  objetivoGeral         String                 @db.Text
+  objetivosEspecificos  String                 @db.Text
   programaInstitucional String?
+  publicoAlvo           String                 @db.Text
+  tipoAcao              TipoAcao
+  imagemCapa            String?
+  atividades            CursoAtividade[]
+  instituicao           Instituicao            @relation(fields: [instituicaoId], references: [id])
+  professor             PerfilProfessor        @relation(fields: [professorId], references: [id])
+  formasAvaliacao       CursoFormaAvaliacao[]
+  formasDivulgacao      CursoFormaDivulgacao[]
+  municipios            CursoMunicipio[]
+  inscricoes            Inscricao[]
+  orcamentos            ItemOrcamento[]
+  equipes               MembroEquipe[]
+  parcerias             Parceria[]
 
-  // TEXTOS DESCRITIVOS
-  apresentacao         String @db.Text
-  justificativa        String @db.Text
-  publicoAlvo          String @db.Text
-  objetivoGeral        String @db.Text
-  objetivosEspecificos String @db.Text
-  metodologia          String @db.Text
-
-  // FKs
-  professorId   String
-  professor     PerfilProfessor @relation(fields: [professorId], references: [id])
-  instituicaoId String
-  instituicao   Instituicao     @relation(fields: [instituicaoId], references: [id])
-
-  inscricoes Inscricao[]
-
-  // CAMPOS MULTI-VALORES
-  municipios       CursoMunicipio[]
-  formasAvaliacao  CursoFormaAvaliacao[]
-  formasDivulgacao CursoFormaDivulgacao[]
-  atividades       CursoAtividade[]
-  equipes          MembroEquipe[]
-  parcerias        Parceria[]
-  orcamentos       ItemOrcamento[]
-
+  @@index([instituicaoId], map: "cursos_extensao_instituicaoId_fkey")
+  @@index([professorId], map: "cursos_extensao_professorId_fkey")
   @@map("cursos_extensao")
 }

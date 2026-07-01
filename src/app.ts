@@ -1,4 +1,6 @@
 import express from 'express';
+import path from 'path';
+
 import { AuthRoutes } from './modules/auth/auth.routes.js';
 import { ProfileRoutes } from './modules/profile/profile.routes.js';
 import { CursosRoutes } from './modules/cursos/cursos.routes.js';
@@ -14,6 +16,7 @@ app.use('/perfil', ProfileRoutes);
 app.use('/cursos', CursosRoutes);
 app.use('/professor', ProfessorRoutes);
 app.use('/inscricao', SubRoutes);
+app.use('/uploads', express.static(path.resolve('uploads')));
 
 app.get('/health', (req, res) => {
   res.status(200).json({
