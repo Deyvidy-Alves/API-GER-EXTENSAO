@@ -1,3 +1,4 @@
+import { ro } from 'zod/locales';
 import { prisma } from '../../lib/prisma.js';
 import { type CreateSubDTO } from './sub.schema.js';
 
@@ -53,6 +54,30 @@ export class SubService {
       });
 
       return sub;
-    })
+    });
+  }
+
+  static async listByCourse(courseId: string, userId: string, roles: string[]) {
+    const course = await prisma.cursoExtensao.findUnique({ where: { id: courseId } });
+    if (!course) throw new Error('Curso não encontrado');
+    
+    const isDeppi = roles.includes('DEPPI');
+
+    if (!isDeppi) {
+      const staffProfile = await prisma.perfilServidor.findUnique({ where: { userId } });
+      const professorProfile = staffProfile
+        ? await prisma.perfilProfessor.findUnique({ where: { perfilServidorId: staffProfile.id } })
+        : null;
+      
+      if (!professorProfile || professorProfile.id !== course.professorId) {
+        throw new Error('Você não tem permissão para ver as inscrições deste curso');
+      }
+    }
+
+    return prisma.inscricao.findMany({
+      where: { cursoId: courseId },
+      include: { aluno: true },
+      orderBy: { inscricaoEm: 'desc' },
+    });
   }
 };
