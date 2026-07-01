@@ -11,6 +11,7 @@ model CursoExtensao {
   localAtuacao  LocalAtuacao
   modeloOferta  ModeloOferta
   status        StatusCurso  @default(RASCUNHO)
+  imagemCapa  String?
 
   // DATAS, VAGAS, CARGA HORARIA
   cargaHoraria    Int
