@@ -150,4 +150,22 @@ export class CursosService {
 
     return cancelado;
   }
+  static async uploadImagem(id: string, file?: Express.Multer.File) {
+
+    if (!file) {
+        throw new Error("Imagem não enviada.");
+    }
+
+    const curso = await prisma.cursoExtensao.update({
+
+        where: { id },
+
+        data: {
+            imagemCapa: `/uploads/cursos/${file.filename}`
+        }
+
+    });
+
+    return curso;
+}
 }
