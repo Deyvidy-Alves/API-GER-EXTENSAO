@@ -162,7 +162,7 @@ export class CursosService {
 
         data: {
             imagemCapa: `/uploads/cursos/${file.filename}`
-        }
+        } as any,
 
     });
 
