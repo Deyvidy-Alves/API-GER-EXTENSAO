@@ -1,4 +1,4 @@
-# API — Autenticação e Perfil
+# API — Autenticação, Perfil e Papéis
 
 Base URL: `http://localhost:3000`
 
@@ -6,7 +6,7 @@ Base URL: `http://localhost:3000`
 
 ## 1. Cadastro de aluno (rota pública)
 
-**POST** `/auth/register`
+**POST** `/autenticacao/registro`
 
 ```json
 {
@@ -27,13 +27,13 @@ Resposta `201`:
 }
 ```
 
-> O papel **ALUNO** é atribuído automaticamente.
+> O papel **ALUNO** é atribuído automaticamente. Essa rota cria apenas o `User` — o `PerfilAluno` (matrícula, curso de graduação etc.) é preenchido depois em `PATCH /perfil/aluno`.
 
 ---
 
 ## 2. Login
 
-**POST** `/auth/login`
+**POST** `/autenticacao/login`
 
 ```json
 {
@@ -54,14 +54,14 @@ Resposta `200`:
 
 ---
 
-## 3. Criar usuário com papel específico (somente ADMIN ou DEPPI)
+## 3. Cadastrar usuário DEPPI (somente ADMIN)
 
-**POST** `/usuarios`
+**POST** `/deppi`
 
 Header:
-```
-Authorization: Bearer <token-do-admin-ou-deppi>
-```
+
+Authorization: Bearer <token-do-admin>
+
 
 Body:
 ```json
@@ -70,25 +70,26 @@ Body:
   "email": "professor@ifce.edu.br",
   "senha": "senha123",
   "instituicaoId": "uuid-da-instituicao",
-  "papel": "PROFESSOR"
+  "perfilServidor": {
+    "siape": "1234567"
+  }
 }
 ```
-
-> O campo `papel` aceita: `PROFESSOR` ou `DEPPI`.
 
 Resposta `201`:
 ```json
 {
   "id": "uuid",
+  "nome": "Professor Teste",
   "email": "professor@ifce.edu.br",
-  "createdAt": "2026-06-03T00:00:00.000Z",
-  "papeis": [
-    {
-      "papel": { "nome": "PROFESSOR" }
-    }
-  ]
+  "ativo": true,
+  "instituicaoId": "uuid-da-instituicao",
+  "perfilServidor": { "...": "..." },
+  "roles": ["DEPPI"]
 }
 ```
+
+> Não existe uma rota `POST /usuarios` nem um campo `papel` genérico — o cadastro é sempre para o papel `DEPPI`, feito por `POST /deppi`. Também não há hoje uma rota equivalente para cadastrar `PROFESSOR` diretamente (não existe módulo `/professores` de cadastro).
 
 ---
 
@@ -97,9 +98,9 @@ Resposta `201`:
 **PATCH** `/perfil/aluno`
 
 Header:
-```
+
 Authorization: Bearer <token-do-aluno>
-```
+
 
 Body:
 ```json
@@ -129,9 +130,9 @@ Resposta `201` (criado) ou `200` (atualizado):
 **GET** `/autenticacao/me`
 
 Header:
-```
+
 Authorization: Bearer <token>
-```
+
 
 Resposta `200`:
 ```json
@@ -160,3 +161,4 @@ Resposta `200`:
 | DEPPI | deppi@ifce.edu.br | deppi123 |
 | PROFESSOR | professor@ifce.edu.br | professor123 |
 | ALUNO | aluno@ifce.edu.br | aluno123 |
+

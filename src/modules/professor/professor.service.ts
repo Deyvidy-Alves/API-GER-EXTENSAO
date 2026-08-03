@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma.js';
-import { type CriarCursoDTO, type AtualizarPerfilDTO } from './professor.schema.js';
+import { type AtualizarPerfilDTO } from './professor.schema.js';
 
 export class ProfessorService {
   // busca o perfilProfessor a partir do userId do token
@@ -83,46 +83,6 @@ export class ProfessorService {
     });
 
     return atualizado;
-  }
-
-  static async criarCurso(userId: string, data: CriarCursoDTO) {
-    const perfilProfessor = await this.getPerfilProfessor(userId);
-
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { instituicaoId: true },
-    });
-
-    if (!user) throw new Error('Usuário não encontrado.');
-
-    const curso = await prisma.cursoExtensao.create({
-      data: {
-        titulo: data.titulo,
-        tipoAcao: data.tipoAcao,
-        tipo: data.tipo,
-        areaTematica: data.areaTematica,
-        linhaExtensao: data.linhaExtensao,
-        localAtuacao: data.localAtuacao,
-        modeloOferta: data.modeloOferta,
-        cargaHoraria: data.cargaHoraria,
-        dataInicio: data.dataInicio,
-        dataFim: data.dataFim,
-        minBeneficiados: data.minBeneficiados,
-        maxBeneficiados: data.maxBeneficiados,
-        fomento: data.fomento ?? null,
-        programaInstitucional: data.programaInstitucional,
-        apresentacao: data.apresentacao,
-        justificativa: data.justificativa,
-        publicoAlvo: data.publicoAlvo,
-        objetivoGeral: data.objetivoGeral,
-        objetivosEspecificos: data.objetivosEspecificos,
-        metodologia: data.metodologia,
-        professorId: perfilProfessor.id,
-        instituicaoId: user.instituicaoId,
-      },
-    });
-
-    return curso;
   }
 
   static async listarMeusCursos(userId: string) {

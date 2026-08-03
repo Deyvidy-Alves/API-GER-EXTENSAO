@@ -12,21 +12,21 @@ router.use(authMiddleware);
 router.get(
   "/",
   checkRole("ADMIN"),
-  checkPermission("usuarios", "read"),
+  checkPermission("deppi", "read"),
   DeppiController.index
 );
 
 router.get(
   "/:id",
   checkRole("ADMIN"),
-  checkPermission("usuarios", "read"),
+  checkPermission("deppi", "read"),
   DeppiController.show
 );
 
 router.post(
   "/",
   checkRole("ADMIN"),
-  checkPermission("usuarios", "create"),
+  checkPermission("deppi", "create"),
   validateZod(createDeppiSchema, "body"),
   DeppiController.create
 );
@@ -34,7 +34,7 @@ router.post(
 router.patch(
   "/:id",
   checkRole("ADMIN"),
-  checkPermission("usuarios", "update"),
+  checkPermission("deppi", "update"),
   validateZod(updateDeppiSchema, "body"),
   DeppiController.update
 );
@@ -42,7 +42,7 @@ router.patch(
 router.delete(
   "/:id",
   checkRole("ADMIN"),
-  checkPermission("usuarios", "delete"),
+  checkPermission("deppi", "delete"),
   DeppiController.remove
 );
 

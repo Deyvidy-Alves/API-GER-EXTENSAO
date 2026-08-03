@@ -28,9 +28,6 @@ export const CreateCursoSchema = z.object({
   objetivoGeral: z.string().min(1, 'Objetivo geral obrigatório'),
   objetivosEspecificos: z.string().min(1, 'Objetivos específicos obrigatórios'),
   metodologia: z.string().min(1, 'Metodologia obrigatória'),
-
-  // FK
-  instituicaoId: z.uuid('instituicaoId deve ser um uuid válido'),
 }).refine((data) => data.dataFim > data.dataInicio, {
   message: 'dataFim deve ser posterior a dataInicio',
   path: ['dataFim'],

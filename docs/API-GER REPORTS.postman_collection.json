@@ -1,0 +1,180 @@
+{
+  "info": {
+    "_postman_id": "e1c494df-7924-44dd-97ac-60da26c50123",
+    "name": "API-GER REPORTS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47079007"
+  },
+  "item": [
+    {
+      "name": "login",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "formato xlsx",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZTZjY2NhZC03YWEwLTRhMzQtYmZkOC04OThkNmI5YzI0YmUiLCJuYW1lIjoiTWVtYnJvIERFUFBJIiwiZW1haWwiOiJkZXBwaUBpZmNlLmVkdS5iciIsInJvbGVzIjpbIkRFUFBJIl0sInBlcm1pc3Npb25zIjpbImluc2NyaWNhbzpkZWxldGUiLCJwcm9mZXNzb3I6Y3JlYXRlIiwicmVsYXRvcmlvOnJlYWQiLCJyZWxhdG9yaW86Y3JlYXRlIiwiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJwcm9mZXNzb3I6cmVhZCIsInByb2Zlc3Nvcjp1cGRhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpkZWxldGUiLCJjdXJzbzpyZWFkIiwiaW5zY3JpY2FvOnVwZGF0ZSIsImFsdW5vOnJlYWQiXSwiaWF0IjoxNzgyOTM5MjA2LCJleHAiOjE3ODM1NDQwMDZ9.FBFV3XznA--05UAbWRwc1uSJUZuAu8gPGL2B-iAjhqo",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/reports/general?formato=xlsx",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "reports",
+            "general"
+          ],
+          "query": [
+            {
+              "key": "formato",
+              "value": "xlsx"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "formato pdf",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZTZjY2NhZC03YWEwLTRhMzQtYmZkOC04OThkNmI5YzI0YmUiLCJuYW1lIjoiTWVtYnJvIERFUFBJIiwiZW1haWwiOiJkZXBwaUBpZmNlLmVkdS5iciIsInJvbGVzIjpbIkRFUFBJIl0sInBlcm1pc3Npb25zIjpbImluc2NyaWNhbzpkZWxldGUiLCJwcm9mZXNzb3I6Y3JlYXRlIiwicmVsYXRvcmlvOnJlYWQiLCJyZWxhdG9yaW86Y3JlYXRlIiwiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJwcm9mZXNzb3I6cmVhZCIsInByb2Zlc3Nvcjp1cGRhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpkZWxldGUiLCJjdXJzbzpyZWFkIiwiaW5zY3JpY2FvOnVwZGF0ZSIsImFsdW5vOnJlYWQiXSwiaWF0IjoxNzgyOTM5MjA2LCJleHAiOjE3ODM1NDQwMDZ9.FBFV3XznA--05UAbWRwc1uSJUZuAu8gPGL2B-iAjhqo",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/reports/general?formato=pdf",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "reports",
+            "general"
+          ],
+          "query": [
+            {
+              "key": "formato",
+              "value": "pdf"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "listar status",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZTZjY2NhZC03YWEwLTRhMzQtYmZkOC04OThkNmI5YzI0YmUiLCJuYW1lIjoiTWVtYnJvIERFUFBJIiwiZW1haWwiOiJkZXBwaUBpZmNlLmVkdS5iciIsInJvbGVzIjpbIkRFUFBJIl0sInBlcm1pc3Npb25zIjpbImluc2NyaWNhbzpkZWxldGUiLCJwcm9mZXNzb3I6Y3JlYXRlIiwicmVsYXRvcmlvOnJlYWQiLCJyZWxhdG9yaW86Y3JlYXRlIiwiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJwcm9mZXNzb3I6cmVhZCIsInByb2Zlc3Nvcjp1cGRhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpkZWxldGUiLCJjdXJzbzpyZWFkIiwiaW5zY3JpY2FvOnVwZGF0ZSIsImFsdW5vOnJlYWQiXSwiaWF0IjoxNzgyOTM5MjA2LCJleHAiOjE3ODM1NDQwMDZ9.FBFV3XznA--05UAbWRwc1uSJUZuAu8gPGL2B-iAjhqo",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/reports/enrollments-by-status",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "reports",
+            "enrollments-by-status"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "listar cursos",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZTZjY2NhZC03YWEwLTRhMzQtYmZkOC04OThkNmI5YzI0YmUiLCJuYW1lIjoiTWVtYnJvIERFUFBJIiwiZW1haWwiOiJkZXBwaUBpZmNlLmVkdS5iciIsInJvbGVzIjpbIkRFUFBJIl0sInBlcm1pc3Npb25zIjpbImluc2NyaWNhbzpkZWxldGUiLCJwcm9mZXNzb3I6Y3JlYXRlIiwicmVsYXRvcmlvOnJlYWQiLCJyZWxhdG9yaW86Y3JlYXRlIiwiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJwcm9mZXNzb3I6cmVhZCIsInByb2Zlc3Nvcjp1cGRhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpkZWxldGUiLCJjdXJzbzpyZWFkIiwiaW5zY3JpY2FvOnVwZGF0ZSIsImFsdW5vOnJlYWQiXSwiaWF0IjoxNzgyOTM5MjA2LCJleHAiOjE3ODM1NDQwMDZ9.FBFV3XznA--05UAbWRwc1uSJUZuAu8gPGL2B-iAjhqo",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/reports/courses",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "reports",
+            "courses"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "listar geral",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZTZjY2NhZC03YWEwLTRhMzQtYmZkOC04OThkNmI5YzI0YmUiLCJuYW1lIjoiTWVtYnJvIERFUFBJIiwiZW1haWwiOiJkZXBwaUBpZmNlLmVkdS5iciIsInJvbGVzIjpbIkRFUFBJIl0sInBlcm1pc3Npb25zIjpbImluc2NyaWNhbzpkZWxldGUiLCJwcm9mZXNzb3I6Y3JlYXRlIiwicmVsYXRvcmlvOnJlYWQiLCJyZWxhdG9yaW86Y3JlYXRlIiwiaW5zY3JpY2FvOnJlYWQiLCJjdXJzbzpjcmVhdGUiLCJwcm9mZXNzb3I6cmVhZCIsInByb2Zlc3Nvcjp1cGRhdGUiLCJjdXJzbzp1cGRhdGUiLCJjdXJzbzpkZWxldGUiLCJjdXJzbzpyZWFkIiwiaW5zY3JpY2FvOnVwZGF0ZSIsImFsdW5vOnJlYWQiXSwiaWF0IjoxNzgyOTM5MjA2LCJleHAiOjE3ODM1NDQwMDZ9.FBFV3XznA--05UAbWRwc1uSJUZuAu8gPGL2B-iAjhqo",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/reports/general",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "reports",
+            "general"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
