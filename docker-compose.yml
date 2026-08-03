@@ -9,7 +9,7 @@ services:
       MYSQL_USER: pweb
       MYSQL_PASSWORD: pweb1-projeto-ifce
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 

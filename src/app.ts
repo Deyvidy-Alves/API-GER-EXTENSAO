@@ -2,6 +2,7 @@ import express from 'express';
 import { AuthRoutes } from './modules/auth/auth.routes.js';
 import { ProfileRoutes } from './modules/profile/profile.routes.js';
 import { ProfessorRoutes } from './modules/professor/professor.routes.js';
+import { ReportsRoutes } from './modules/reports/reports.routes.js';
 
 const app = express();
 
@@ -9,6 +10,7 @@ app.use(express.json());
 app.use('/autenticacao', AuthRoutes);
 app.use('/perfil', ProfileRoutes);
 app.use('/professor', ProfessorRoutes);
+app.use('/reports', ReportsRoutes);
 
 
 app.get('/health', (req, res) => {
