@@ -31,17 +31,24 @@ export class CursosService {
   static async createCurso(userId: string, data: CreateCursoDTO) {
     const perfilProfessor = await this.getPerfilProfessorByUserId(userId);
 
-    // Separa instituicaoId e professorId (FKs obrigatórias) dos demais campos,
-    // que podem conter opcionais com undefined. stripUndefined garante que
-    // esses campos opcionais não cheguem como undefined explícito ao Prisma.
-    const { instituicaoId, ...rest } = data;
-    const cleanRest = stripUndefined(rest);
+    // instituicaoId é resolvido a partir do usuário logado — não é aceito no
+    // body, para impedir que um professor crie um curso em outra instituição.
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { instituicaoId: true },
+    });
+
+    if (!user) {
+      throw new Error('Usuário não encontrado.');
+    }
+
+    const cleanData = stripUndefined(data);
 
     const curso = await prisma.cursoExtensao.create({
       data: {
-        ...cleanRest,
+        ...cleanData,
         professorId: perfilProfessor.id,
-        instituicaoId,
+        instituicaoId: user.instituicaoId,
       } as any,
     });
 
