@@ -10,5 +10,7 @@ model Instituicao {
 
   cursos CursoExtensao[]
 
+  departamentos Departamento[]
+
   @@map("instituicoes")
 }
