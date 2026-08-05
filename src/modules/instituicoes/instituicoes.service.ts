@@ -78,8 +78,7 @@ export class InstituicoesService {
   static async remove(id: string) {
     const instituicao = await this.getById(id);
 
-    // Não permite excluir uma instituição que ainda possui usuários ou cursos
-    // vinculados, para não quebrar as relações existentes.
+    // nao exclui se tiver usuarios ou cursos vinculados
     if (instituicao._count.usuarios > 0 || instituicao._count.cursos > 0) {
       throw new Error(
         "Não é possível excluir: existem usuários ou cursos vinculados a esta instituição."
