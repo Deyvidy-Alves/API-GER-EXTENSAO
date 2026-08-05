@@ -10,6 +10,7 @@ import { DeppiRoutes } from './modules/deppi/deppi.routes.js';
 import { ReportsRoutes } from './modules/reports/reports.routes.js';
 import { InstituicoesRoutes } from './modules/instituicoes/instituicoes.routes.js';
 import { UsuariosRoutes } from './modules/usuarios/usuarios.routes.js';
+import { PermissoesRoutes } from './modules/permissoes/permissoes.routes.js';
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/deppi', DeppiRoutes);
 app.use('/relatorios', ReportsRoutes);
 app.use('/instituicoes', InstituicoesRoutes);
 app.use('/usuarios', UsuariosRoutes);
+app.use('/permissoes', PermissoesRoutes);
 app.use('/uploads', express.static(path.resolve('uploads')));
 
 app.get('/health', (req, res) => {
