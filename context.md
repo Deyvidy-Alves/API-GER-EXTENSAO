@@ -201,7 +201,7 @@ id, userId (unique, FK → User),
 siape (unique), matricula? (unique), setorSuap?, lotacaoSiape?, exercicioSiape?,
 situacao? (SituacaoServidor), regimeTrabalho? (RegimeTrabalho),
 jornadaTrabalho? (JornadaTrabalho), operaRaioX (default false),
-inicioServicioPublico?, dataPosseInstituicao?, inicioExercicioInstituicao?,
+inicioServicoPublico?, dataPosseInstituicao?, inicioExercicioInstituicao?,
 dataPosseCargo?, inicioExercicioCargo?,
 cargo?, classeCargo?, padrao?, grupoCargo?, codigoVaga?,
 banco?, agencia?, contaCorrente?

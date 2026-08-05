@@ -13,7 +13,7 @@ model PerfilServidor {
   regimeTrabalho             RegimeTrabalho?
   jornadaTrabalho            JornadaTrabalho?
   operaRaioX                 Boolean           @default(false)
-  inicioServicioPublico      DateTime?
+  inicioServicoPublico      DateTime?
   dataPosseInstituicao       DateTime?
   inicioExercicioInstituicao DateTime?
   dataPosseCargo             DateTime?
