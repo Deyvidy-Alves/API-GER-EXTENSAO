@@ -42,6 +42,7 @@ async function main() {
     inscricaoCreate, inscricaoRead, inscricaoUpdate, inscricaoDelete,
     relatorioCreate, relatorioRead,
     instituicaoCreate, instituicaoRead, instituicaoUpdate, instituicaoDelete,
+    usuarioRead, usuarioUpdate, usuarioDelete,
   ] = await Promise.all([
     upsertPerm('aluno', 'create'),
     upsertPerm('aluno', 'read'),
@@ -75,6 +76,10 @@ async function main() {
     upsertPerm('instituicao', 'read'),
     upsertPerm('instituicao', 'update'),
     upsertPerm('instituicao', 'delete'),
+
+    upsertPerm('usuario', 'read'),
+    upsertPerm('usuario', 'update'),
+    upsertPerm('usuario', 'delete'),
   ])
 
   // ─── 3. ATRIBUIÇÕES PAPEL ↔ PERMISSÃO ────────────────────────────────────
@@ -132,6 +137,9 @@ async function main() {
     { papelId: admin.id, permissaoId: instituicaoRead.id },
     { papelId: admin.id, permissaoId: instituicaoUpdate.id },
     { papelId: admin.id, permissaoId: instituicaoDelete.id },
+    { papelId: admin.id, permissaoId: usuarioRead.id },
+    { papelId: admin.id, permissaoId: usuarioUpdate.id },
+    { papelId: admin.id, permissaoId: usuarioDelete.id },
   ]
 
   for (const a of atribuicoes) {
