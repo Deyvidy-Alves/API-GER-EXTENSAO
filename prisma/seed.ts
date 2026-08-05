@@ -41,6 +41,10 @@ async function main() {
     cursoCreate, cursoRead, cursoUpdate, cursoDelete,
     inscricaoCreate, inscricaoRead, inscricaoUpdate, inscricaoDelete,
     relatorioCreate, relatorioRead,
+    instituicaoCreate, instituicaoRead, instituicaoUpdate, instituicaoDelete,
+    usuarioRead, usuarioUpdate, usuarioDelete,
+    permissaoCreate, permissaoRead, permissaoUpdate,
+    departamentoCreate, departamentoRead, departamentoUpdate, departamentoDelete,
   ] = await Promise.all([
     upsertPerm('aluno', 'create'),
     upsertPerm('aluno', 'read'),
@@ -69,6 +73,24 @@ async function main() {
 
     upsertPerm('relatorio', 'create'),
     upsertPerm('relatorio', 'read'),
+
+    upsertPerm('instituicao', 'create'),
+    upsertPerm('instituicao', 'read'),
+    upsertPerm('instituicao', 'update'),
+    upsertPerm('instituicao', 'delete'),
+
+    upsertPerm('usuario', 'read'),
+    upsertPerm('usuario', 'update'),
+    upsertPerm('usuario', 'delete'),
+
+    upsertPerm('permissao', 'create'),
+    upsertPerm('permissao', 'read'),
+    upsertPerm('permissao', 'update'),
+
+    upsertPerm('departamento', 'create'),
+    upsertPerm('departamento', 'read'),
+    upsertPerm('departamento', 'update'),
+    upsertPerm('departamento', 'delete'),
   ])
 
   // ─── 3. ATRIBUIÇÕES PAPEL ↔ PERMISSÃO ────────────────────────────────────
@@ -122,6 +144,20 @@ async function main() {
     { papelId: admin.id, permissaoId: inscricaoDelete.id },
     { papelId: admin.id, permissaoId: relatorioCreate.id },
     { papelId: admin.id, permissaoId: relatorioRead.id },
+    { papelId: admin.id, permissaoId: instituicaoCreate.id },
+    { papelId: admin.id, permissaoId: instituicaoRead.id },
+    { papelId: admin.id, permissaoId: instituicaoUpdate.id },
+    { papelId: admin.id, permissaoId: instituicaoDelete.id },
+    { papelId: admin.id, permissaoId: usuarioRead.id },
+    { papelId: admin.id, permissaoId: usuarioUpdate.id },
+    { papelId: admin.id, permissaoId: usuarioDelete.id },
+    { papelId: admin.id, permissaoId: permissaoCreate.id },
+    { papelId: admin.id, permissaoId: permissaoRead.id },
+    { papelId: admin.id, permissaoId: permissaoUpdate.id },
+    { papelId: admin.id, permissaoId: departamentoCreate.id },
+    { papelId: admin.id, permissaoId: departamentoRead.id },
+    { papelId: admin.id, permissaoId: departamentoUpdate.id },
+    { papelId: admin.id, permissaoId: departamentoDelete.id },
   ]
 
   for (const a of atribuicoes) {

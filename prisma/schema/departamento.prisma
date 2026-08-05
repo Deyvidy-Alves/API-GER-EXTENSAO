@@ -1,0 +1,13 @@
+model Departamento {
+  id        String   @id @default(uuid())
+  nome      String
+  sigla     String?
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  // vinculo com a instituicao
+  instituicaoId String
+  instituicao   Instituicao @relation(fields: [instituicaoId], references: [id])
+
+  @@map("departamentos")
+}
