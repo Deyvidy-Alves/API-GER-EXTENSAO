@@ -42,6 +42,12 @@ router.patch(
   validateZod(UpdateCursoSchema, 'body'),
   CursosController.update
 );
+router.patch(
+  '/:id/close',
+  checkRole('DEPPI', 'PROFESSOR'),
+  validateZod(CursoIdParamSchema, 'params'),
+  CursosController.close
+);
 
 router.delete(
   '/:id',

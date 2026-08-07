@@ -145,7 +145,7 @@ export class CursosService {
     return updated;
   }
 
-  static async deleteCurso(id: string, userId: string, roles: string[]) {
+  static async closeCurso(id: string, userId: string, roles: string[]) {
     const curso = await this.getCursoOrThrow(id);
 
     await this.assertCanManageCurso(userId, roles, curso.professorId);
@@ -157,6 +157,17 @@ export class CursosService {
 
     return cancelado;
   }
+    static async removeCurso(id: string, userId: string, roles: string[]) {
+    const curso = await this.getCursoOrThrow(id);
+ 
+    await this.assertCanManageCurso(userId, roles, curso.professorId);
+ 
+    await prisma.cursoExtensao.delete({ where: { id } });
+ 
+    return { message: 'Curso removido permanentemente.' };
+  }
+
+
   static async uploadImagem(id: string, file?: Express.Multer.File) {
 
     if (!file) {

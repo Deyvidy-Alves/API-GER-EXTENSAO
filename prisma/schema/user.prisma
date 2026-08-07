@@ -10,6 +10,7 @@ model User {
   telefonesInstitucionais String? // JSON string: '["(88)99999-9999"]'
   telefonesPessoais       String? // JSON string: '["(88)99999-9999"]'
   senhaHash               String
+  fotoPerfil              String?
   emPGD                   Boolean  @default(false)
   ativo                   Boolean  @default(true)
   createdAt               DateTime @default(now())
