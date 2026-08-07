@@ -70,6 +70,25 @@ export class CursosController {
       res.status(400).json({ error: error.message });
     }
   }
+    static async close(req: Request, res: Response) {
+    try {
+      const { id } = req.params as { id: string };
+      const userId = req.user!.sub;
+      const roles = req.user!.roles;
+ 
+      const curso = await CursosService.closeCurso(id, userId, roles);
+      return res.status(200).json(curso);
+    } catch (error: any) {
+      if (error.message === 'Curso não encontrado.') {
+        return res.status(404).json({ error: error.message });
+      }
+      if (error.message.includes('permissão')) {
+        return res.status(403).json({ error: error.message });
+      }
+      res.status(400).json({ error: error.message });
+    }
+  }
+
 
   static async remove(req: Request, res: Response) {
     try {
@@ -77,7 +96,7 @@ export class CursosController {
       const userId = req.user!.sub;
       const roles = req.user!.roles;
 
-      const curso = await CursosService.deleteCurso(id, userId, roles);
+      const curso = await CursosService.removeCurso(id, userId, roles);
       return res.status(200).json(curso);
     } catch (error: any) {
       if (error.message === 'Curso não encontrado.') {
