@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "start": "tsc && node dist/server.js"
+    "start": "tsc && node dist/server.js",
+    "postinstall": "prisma generate"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts",
