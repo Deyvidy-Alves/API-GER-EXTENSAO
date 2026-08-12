@@ -64,6 +64,7 @@ model User {
   inscricoesHistorico InscricaoHistorico[]
 
   passwordResetToken PasswordResetToken[]
+  refreshToken RefreshToken[]
 
   @@map("users")
 }

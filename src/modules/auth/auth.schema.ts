@@ -21,7 +21,17 @@ export const resetPasswordSchema = z.object({
   novaSenha: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres.')
 })
 
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1, 'Refresh Token é obrigatório')
+})
+
+export const logoutSchema = z.object({
+  refreshToken: z.string().min(1, 'Refresh Token é obrigatório')
+})
+
 export type RegisterDTO = z.infer<typeof registerSchema>
 export type LoginDTO = z.infer<typeof loginSchema>
 export type ForgotPasswordDTO = z.infer<typeof forgotPasswordSchema>
 export type ResetPasswordDTO = z.infer<typeof resetPasswordSchema>
+export type RefreshTokenDTO = z.infer<typeof refreshTokenSchema>
+export type LogoutDTO = z.infer<typeof logoutSchema>

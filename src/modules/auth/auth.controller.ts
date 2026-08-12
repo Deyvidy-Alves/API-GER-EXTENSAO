@@ -41,4 +41,22 @@ export class AuthController {
       res.status(400).json({ error: error.message });
     }
   }
+
+   static async refresh(req: Request, res: Response) {
+    try {
+      const result = await AuthService.refresh(req.body);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      res.status(401).json({ error: error.message });
+    }
+  }
+
+  static async logout(req: Request, res: Response) {
+    try {
+      const result = await AuthService.logout(req.body);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
