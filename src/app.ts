@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import { corsMiddleware } from './middlewares/cors.middleware.js';
 import { AuthRoutes } from './modules/auth/auth.routes.js';
 import { ProfileRoutes } from './modules/profile/profile.routes.js';
 import { CursosRoutes } from './modules/cursos/cursos.routes.js';
@@ -15,6 +16,7 @@ import { DepartamentosRoutes } from './modules/departamentos/departamentos.route
 
 const app = express();
 
+app.use(corsMiddleware);
 app.use(express.json());
 
 app.use('/autenticacao', AuthRoutes);
