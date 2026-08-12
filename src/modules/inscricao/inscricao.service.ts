@@ -1,4 +1,4 @@
-import { Prisma } from '../../../generated/prisma/client.js';
+import { Prisma } from '../../../prisma/generated/prisma/client.js';
 import { prisma } from '../../lib/prisma.js';
 import { HttpError } from '../../errors/http-error.js';
 import { type CreateSubDTO } from './inscricao.schema.js';
