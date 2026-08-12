@@ -4,7 +4,7 @@ import { AuthRoutes } from './modules/auth/auth.routes.js';
 import { ProfileRoutes } from './modules/profile/profile.routes.js';
 import { CursosRoutes } from './modules/cursos/cursos.routes.js';
 import { ProfessorRoutes } from './modules/professor/professor.routes.js';
-import SubRoutes from './modules/subscription/subscription.routes.js';
+import SubRoutes from './modules/inscricao/inscricao-documentos.route.js';
 import { DeppiRoutes } from "./modules/deppi/deppi.routes.js";
 
 const app = express();
