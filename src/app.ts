@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { corsMiddleware } from './middlewares/cors.middleware.js';
 import { requestLogger } from './middlewares/logger.middleware.js';
+import { notFoundHandler, errorHandler } from './middlewares/error.middleware.js';
 import { AuthRoutes } from './modules/auth/auth.routes.js';
 import { ProfileRoutes } from './modules/profile/profile.routes.js';
 import { CursosRoutes } from './modules/cursos/cursos.routes.js';
@@ -40,5 +41,9 @@ app.get('/health', (req, res) => {
     status: 'ok',
   });
 });
+
+// Rota nao encontrada e tratamento global de erros (sempre por ultimo).
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;
