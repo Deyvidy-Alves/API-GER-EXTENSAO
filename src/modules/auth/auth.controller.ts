@@ -23,4 +23,22 @@ export class AuthController {
    static async me (req: Request, res: Response) {
      return res.status(200).json({ user: req.user });
   }
+
+  static async forgotPassword(req: Request, res: Response) {
+    try {
+      const result = await AuthService.forgotPassword(req.body);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  static async resetPassword(req: Request, res: Response) {
+    try {
+      const result = await AuthService.resetPassword(req.body);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
