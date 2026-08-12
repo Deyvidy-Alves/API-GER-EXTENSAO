@@ -1,4 +1,4 @@
-import { error } from 'node:console';
+import { AppError } from '../../utils/AppError.js';
 import { prisma } from '../../lib/prisma.js';
 import { type StudentProfilelDTO, type TelefoneDTO, type EnderecoDTO } from './profile.schema.js';
 
@@ -8,7 +8,7 @@ export class ProfileService {
     const isAluno = roles.includes('ALUNO');
 
     if (!isAluno) {
-      throw new Error("Não é aluno!");
+      throw new AppError("Não é aluno!", 400);
     }
 
     const exists = await prisma.perfilAluno.findUnique({ where: { userId } });
@@ -69,7 +69,7 @@ export class ProfileService {
       },
     });
 
-    if (!user) throw new Error('Usuário não encontrado.');
+    if (!user) throw new AppError('Usuário não encontrado.', 404);
 
     // Telefones são armazenados como JSON string — converte para array na resposta
     return {
@@ -85,7 +85,7 @@ export class ProfileService {
 
   // ─── FOTO ────────────────────────────────────────────────────────────────────
   static async saveFoto(userId: string, file?: Express.Multer.File) {
-    if (!file) throw new Error('Foto não enviada.');
+    if (!file) throw new AppError('Foto não enviada.', 400);
 
     const user = await prisma.user.update({
       where: { id: userId },

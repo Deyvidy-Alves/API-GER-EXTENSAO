@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 import { type ListUsuariosQueryDTO, type UpdateUsuarioDTO } from "./usuarios.schema.js";
 
 // Remove chaves com valor undefined do objeto.
@@ -73,7 +74,7 @@ export class UsuariosService {
     });
 
     if (!user) {
-      throw new Error("Usuário não encontrado.");
+      throw new AppError("Usuário não encontrado.", 404);
     }
 
     return {
@@ -86,7 +87,7 @@ export class UsuariosService {
   static async update(id: string, data: UpdateUsuarioDTO) {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user) {
-      throw new Error("Usuário não encontrado.");
+      throw new AppError("Usuário não encontrado.", 404);
     }
 
     // evita email duplicado
@@ -95,7 +96,7 @@ export class UsuariosService {
         where: { email: data.email },
       });
       if (emailExists) {
-        throw new Error("Já existe um usuário com este email.");
+        throw new AppError("Já existe um usuário com este email.", 409);
       }
     }
 
@@ -110,7 +111,7 @@ export class UsuariosService {
   static async remove(id: string) {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user) {
-      throw new Error("Usuário não encontrado.");
+      throw new AppError("Usuário não encontrado.", 404);
     }
 
     // exclusao logica: so inativa a conta

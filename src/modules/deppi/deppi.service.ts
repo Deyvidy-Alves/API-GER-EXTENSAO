@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import { createUserWithStaffProfile } from "../../utils/usersAndProfiles/createUserWithStaffProfile.js";
+import { AppError } from "../../utils/AppError.js";
 
 export class DeppiService {
   static async list() {
@@ -52,12 +53,12 @@ export class DeppiService {
     });
 
     if (!user) {
-      throw new Error("Usuário DEPPI não encontrado.");
+      throw new AppError("Usuário DEPPI não encontrado.", 404);
     }
 
     const isDeppi = user.papeis.some((p) => p.papel.nome === "DEPPI");
     if (!isDeppi) {
-      throw new Error("O usuário informado não é DEPPI.");
+      throw new AppError("O usuário informado não é DEPPI.", 400);
     }
 
     return {
@@ -93,12 +94,12 @@ export class DeppiService {
     });
 
     if (!user) {
-      throw new Error("Usuário DEPPI não encontrado.");
+      throw new AppError("Usuário DEPPI não encontrado.", 404);
     }
 
     const isDeppi = user.papeis.some((p) => p.papel.nome === "DEPPI");
     if (!isDeppi) {
-      throw new Error("O usuário informado não é DEPPI.");
+      throw new AppError("O usuário informado não é DEPPI.", 400);
     }
 
     return prisma.$transaction(async (tx) => {
@@ -113,7 +114,7 @@ export class DeppiService {
 
       if (data.perfilServidor) {
         if (!user.perfilServidor) {
-          throw new Error("Perfil servidor não encontrado.");
+          throw new AppError("Perfil servidor não encontrado.", 404);
         }
 
         await tx.perfilServidor.update({
@@ -132,7 +133,7 @@ export class DeppiService {
       });
 
       if (!refreshed) {
-        throw new Error("Falha ao carregar dados atualizados.");
+        throw new AppError("Falha ao carregar dados atualizados.", 500);
       }
 
       return {
@@ -157,12 +158,12 @@ export class DeppiService {
     });
 
     if (!user) {
-      throw new Error("Usuário DEPPI não encontrado.");
+      throw new AppError("Usuário DEPPI não encontrado.", 404);
     }
 
     const isDeppi = user.papeis.some((p) => p.papel.nome === "DEPPI");
     if (!isDeppi) {
-      throw new Error("O usuário informado não é DEPPI.");
+      throw new AppError("O usuário informado não é DEPPI.", 400);
     }
 
     await prisma.user.update({

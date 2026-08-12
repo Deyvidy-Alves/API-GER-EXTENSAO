@@ -2,6 +2,7 @@ import { prisma } from '../../lib/prisma.js';
 import ExcelJS from 'exceljs';
 import PDFDocument from 'pdfkit';
 import { type Response } from 'express';
+import { AppError } from '../../utils/AppError.js';
 
 export type ReportFormat = 'json' | 'xlsx' | 'pdf';
 
@@ -58,7 +59,7 @@ export class ReportsService {
       select: { id: true, titulo: true },
     });
 
-    if (!course) throw new Error('Curso não encontrado.');
+    if (!course) throw new AppError('Curso não encontrado.', 404);
 
     const enrollments = await prisma.inscricao.findMany({
       where: { cursoId },

@@ -5,17 +5,18 @@ import { getEnv } from '../../utils/getEnv.js';
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import { hashToken } from '../../utils/hashToken.js';
+import { AppError } from '../../utils/AppError.js';
 export class AuthService {
   static async register(data: RegisterDTO) {
     const userExists = await prisma.user.findUnique({ where: {email: data.email } });
 
     if (userExists) {
-      throw new Error('Email ja cadastrado.');
+      throw new AppError('Email ja cadastrado.', 409);
     }
 
     const cpfExists = await prisma.user.findUnique({ where: { cpf: data.cpf } });
     if (cpfExists) {
-      throw new Error('CPF já cadastrado.');
+      throw new AppError('CPF já cadastrado.', 409);
     }
 
     const passwordHash = await bcrypt.hash(data.senha, 10);
@@ -59,14 +60,14 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new Error('Email ou senha inválidos!');
+      throw new AppError('Email ou senha inválidos!', 401);
     }
 
     //verificar se a senha esta correta
     const isPasswordMatches = await bcrypt.compare(data.senha, user.senhaHash);
 
     if (!isPasswordMatches) {
-      throw new Error('Email ou senha inválidos');
+      throw new AppError('Email ou senha inválidos', 401);
     }
 
     // montar a carga do token
@@ -141,15 +142,15 @@ export class AuthService {
     });
 
     if (!resetToken) {
-      throw new Error('Token inválido.');
+      throw new AppError('Token inválido.', 401);
     }
 
     if (resetToken.used) {
-      throw new Error('Token já utilizado.');
+      throw new AppError('Token já utilizado.', 409);
     }
 
     if (resetToken.expiresAt < new Date()) {
-      throw new Error('Token expirado.');
+      throw new AppError('Token expirado.', 401);
     }
 
     const senhaHash = await bcrypt.hash(data.novaSenha, 10);
@@ -186,9 +187,9 @@ export class AuthService {
       }
     });
 
-    if (!stored) throw new Error('Refresh token inválido.');
-    if (stored.revoked) throw new Error('Refresh token revogado.');
-    if (stored.expiresAt < new Date()) throw new Error('Refresh token expirado.');
+    if (!stored) throw new AppError('Refresh token inválido.', 401);
+    if (stored.revoked) throw new AppError('Refresh token revogado.', 401);
+    if (stored.expiresAt < new Date()) throw new AppError('Refresh token expirado.', 401);
 
     const roles = stored.user.papeis.map(userPapel => userPapel.papel.nome);
     const permissions = stored.user.papeis.flatMap(userPapel =>

@@ -1,4 +1,5 @@
 import { prisma } from '../../lib/prisma.js';
+import { AppError } from '../../utils/AppError.js';
 import { type AtualizarPerfilDTO } from './professor.schema.js';
 
 export class ProfessorService {
@@ -10,7 +11,7 @@ export class ProfessorService {
     });
 
     if (!perfilServidor?.perfilProfessor) {
-      throw new Error('Perfil de professor não encontrado. Contate o DEPPI.');
+      throw new AppError('Perfil de professor não encontrado. Contate o DEPPI.', 404);
     }
 
     return perfilServidor.perfilProfessor;
@@ -56,7 +57,7 @@ export class ProfessorService {
       },
     });
 
-    if (!user) throw new Error('Usuário não encontrado.');
+    if (!user) throw new AppError('Usuário não encontrado.', 404);
     return user;
   }
 
@@ -119,7 +120,7 @@ export class ProfessorService {
       },
     });
 
-    if (!curso) throw new Error('Curso não encontrado.');
+    if (!curso) throw new AppError('Curso não encontrado.', 404);
 
     // agrupa as inscrições por status
     const inscricoesPorStatus = curso.inscricoes.reduce((acc, i) => {
@@ -140,7 +141,7 @@ export class ProfessorService {
       select: { id: true },
     });
 
-    if (!curso) throw new Error('Curso não encontrado.');
+    if (!curso) throw new AppError('Curso não encontrado.', 404);
 
     const inscricoes = await prisma.inscricao.findMany({
       where: { cursoId },

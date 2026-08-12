@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs/promises";
 import { prisma } from "../../lib/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 
 type AuthUser = {
   sub: string;
@@ -11,12 +12,6 @@ type AuthUser = {
 };
 
 type UploadedFile = Express.Multer.File;
-
-function createHttpError(message: string, statusCode: number) {
-  const error = new Error(message) as Error & { statusCode?: number };
-  error.statusCode = statusCode;
-  return error;
-}
 
 function getRoles(user?: AuthUser) {
   return [...new Set((user?.roles ?? []).map((r) => String(r).toUpperCase()))];
@@ -105,21 +100,21 @@ async function uploadDocuments(
   user: AuthUser
 ) {
   if (!files || files.length === 0) {
-    throw createHttpError("Envie ao menos um arquivo", 400);
+    throw new AppError("Envie ao menos um arquivo", 400);
   }
 
   const inscricao = await getInscricao(inscricaoId);
 
   if (!inscricao) {
     await removeUploadedFiles(files);
-    throw createHttpError("Inscrição não encontrada", 404);
+    throw new AppError("Inscrição não encontrada", 404);
   }
 
   const allowed = await canAccessInscricao(user, inscricao);
 
   if (!allowed) {
     await removeUploadedFiles(files);
-    throw createHttpError(
+    throw new AppError(
       "Sem permissão para anexar documentos nesta inscrição",
       403
     );
@@ -154,13 +149,13 @@ async function listDocuments(inscricaoId: string, user: AuthUser) {
   const inscricao = await getInscricao(inscricaoId);
 
   if (!inscricao) {
-    throw createHttpError("Inscrição não encontrada", 404);
+    throw new AppError("Inscrição não encontrada", 404);
   }
 
   const allowed = await canAccessInscricao(user, inscricao);
 
   if (!allowed) {
-    throw createHttpError(
+    throw new AppError(
       "Sem permissão para visualizar documentos desta inscrição",
       403
     );
@@ -182,13 +177,13 @@ async function downloadDocument(
   const inscricao = await getInscricao(inscricaoId);
 
   if (!inscricao) {
-    throw createHttpError("Inscrição não encontrada", 404);
+    throw new AppError("Inscrição não encontrada", 404);
   }
 
   const allowed = await canAccessInscricao(user, inscricao);
 
   if (!allowed) {
-    throw createHttpError("Sem permissão para acessar este documento", 403);
+    throw new AppError("Sem permissão para acessar este documento", 403);
   }
 
   const documento = await prisma.inscricaoDocumento.findFirst({
@@ -199,7 +194,7 @@ async function downloadDocument(
   });
 
   if (!documento) {
-    throw createHttpError("Documento não encontrado", 404);
+    throw new AppError("Documento não encontrado", 404);
   }
 
   const absolutePath = path.resolve(process.cwd(), documento.caminho);
@@ -207,7 +202,7 @@ async function downloadDocument(
   try {
     await fs.access(absolutePath);
   } catch {
-    throw createHttpError("Arquivo não encontrado no servidor", 404);
+    throw new AppError("Arquivo não encontrado no servidor", 404);
   }
 
   return {
