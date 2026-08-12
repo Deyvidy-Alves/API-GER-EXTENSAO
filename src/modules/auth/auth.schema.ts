@@ -1,10 +1,16 @@
 import { z } from 'zod'
+import { isValidCpf } from '../../utils/isValidCpf.js'
 
 export const registerSchema = z.object({
-  nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres.'),
-  email: z.email('Email inválido.'),
-  senha: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres.'),
-  instituicaoId: z.uuid('ID da instituicao inválido.')
+    nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres.'),
+    email: z.email('Email inválido.'),
+    senha: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres.'),
+    confirmarSenha: z.string().min(8, 'Confirmação de senha é obrigatória.'),
+    instituicaoId: z.uuid('ID da instituicao inválido.'),
+    cpf: z.string().refine(isValidCpf, 'CPF inválido.')
+  }).refine((data) => data.senha === data.confirmarSenha, {
+  message: 'As senhas não coincidem.',
+  path: ['confirmarSenha']
 })
 
 export const loginSchema = z.object({

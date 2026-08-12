@@ -13,28 +13,25 @@ export class AuthService {
       throw new Error('Email ja cadastrado.');
     }
 
+    const cpfExists = await prisma.user.findUnique({ where: { cpf: data.cpf } });
+    if (cpfExists) {
+      throw new Error('CPF já cadastrado.');
+    }
+
     const passwordHash = await bcrypt.hash(data.senha, 10);
 
     const user = await prisma.user.create({
       data: {
         nome: data.nome,
         email: data.email,
+        cpf: data.cpf,
         senhaHash: passwordHash,
         instituicaoId: data.instituicaoId,
         papeis: {
-          create: {
-            papel: {
-              connect: { nome: 'ALUNO' } //apenas aluno usa a rota publica registro para se cadastrar
-            }
-          }
+          create: { papel: { connect: { nome: 'ALUNO' } } }
         }
       },
-      select: {
-        id: true, 
-        nome: true,
-        email: true,
-        createdAt: true
-      }
+      select: { id: true, nome: true, email: true, createdAt: true }
     });
 
     return user;
@@ -137,7 +134,7 @@ export class AuthService {
   }
 
   static async resetPassword(data: ResetPasswordDTO) {
-    const tokenHash = hashToken(data.token); // o usuário manda o token cru, você faz o hash pra buscar
+    const tokenHash = hashToken(data.token); 
 
     const resetToken = await prisma.passwordResetToken.findUnique({
       where: { tokenHash }
