@@ -96,6 +96,8 @@ A API vai rodar em `http://localhost:3000`.
 |---|---|---|---|
 | POST | `/autenticacao/registro` | Cadastro de aluno (papel ALUNO automático) | Não |
 | POST | `/autenticacao/login` | Login, retorna JWT | Não |
+| POST | `/autenticacao/esqueci-senha` | Solicita recuperação de senha (envia token) | Não |
+| POST | `/autenticacao/redefinir-senha` | Redefine a senha usando o token recebido | Não |
 | GET | `/autenticacao/me` | Dados do usuário logado (payload do token) | Sim |
 
 ### Perfil (`/perfil`)
