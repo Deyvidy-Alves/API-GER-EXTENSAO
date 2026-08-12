@@ -1,46 +1,53 @@
-import { ro } from 'zod/locales';
+import { Prisma } from '../../../generated/prisma/client.js';
 import { prisma } from '../../lib/prisma.js';
-import { type CreateSubDTO } from './sub.schema.js';
+import { HttpError } from '../../errors/http-error.js';
+import { type CreateSubDTO } from './inscricao.schema.js';
 
-export class SubService {
-  static async create (data: CreateSubDTO, userId: string) {
-    // verificar se usuario (aluno) existe
-    const profileStudent = await prisma.perfilAluno.findUnique({ where: { userId } });
-    if (!profileStudent) throw new Error('Usuário não possui perfil de aluno');
+type StatusInscricao = 'PENDENTE' | 'APROVADA' | 'REJEITADA' | 'CANCELADA' | 'LISTA_ESPERA';
 
-    //verificar se curso existe e se está publicado
-    const course = await prisma.cursoExtensao.findUnique({ where: { id: data.cursoId } });
-    if (!course) throw new Error('Curso não encontrado')
-    if(course.status !== 'PUBLICADO') throw new Error('Curso não foi publicado.');
+// Retry em conflito de serialização (Postgres: código P2034 no Prisma).
+// Necessário porque isolationLevel Serializable pode abortar transações
+// concorrentes que leem/escrevem o mesmo conjunto de linhas.
+async function runSerializable<T>(fn: (tx: Prisma.TransactionClient) => Promise<T>, retries = 3): Promise<T> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await prisma.$transaction<T>(fn, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    } catch (error: any) {
+      const isSerializationConflict = error?.code === 'P2034';
+      if (isSerializationConflict && attempt < retries) continue;
+      throw error;
+    }
+  }
+  throw new HttpError('Não foi possível concluir a operação, tente novamente', 409);
+}
 
-    //verifica inscrição duplicada
-    const isRegistered = await prisma.inscricao.findUnique({
-      where: {
-        alunoId_cursoId: {
-          alunoId: profileStudent.id,
-          cursoId: data.cursoId,
+export class InscricaoService {
+  static async create(data: CreateSubDTO, userId: string) {
+    return runSerializable(async (tx) => {
+      const profileStudent = await tx.perfilAluno.findUnique({ where: { userId } });
+      if (!profileStudent) throw new HttpError('Usuário não possui perfil de aluno', 403);
+
+      const course = await tx.cursoExtensao.findUnique({ where: { id: data.cursoId } });
+      if (!course) throw new HttpError('Curso não encontrado', 404);
+      if (course.status !== 'PUBLICADO') throw new HttpError('Curso não foi publicado.', 400);
+
+      const isRegistered = await tx.inscricao.findUnique({
+        where: {
+          alunoId_cursoId: {
+            alunoId: profileStudent.id,
+            cursoId: data.cursoId,
+          },
         },
-      },
-    });
+      });
+      if (isRegistered) throw new HttpError('Aluno já possui inscrição neste curso', 400);
 
-    if (isRegistered) throw new Error('Aluno já possui inscrição neste curso');
+      const totalAccepted = await tx.inscricao.count({
+        where: { cursoId: data.cursoId, status: 'APROVADA' },
+      });
+      const status: StatusInscricao = totalAccepted >= course.maxBeneficiados ? 'LISTA_ESPERA' : 'PENDENTE';
 
-    //verificar vagas
-    const totalAccepted = await prisma.inscricao.count({
-      where: { cursoId: data.cursoId, status: 'APROVADA'}
-    });
-    const status = totalAccepted >= course.maxBeneficiados ? 'LISTA_ESPERA' : 'PENDENTE';
-
-    /*return prisma.inscricao.create({
-      data: { alunoId: profileStudent.id, cursoId: data.cursoId, status }
-    })*/
-    return prisma.$transaction(async (tx: any) => {
       const sub = await tx.inscricao.create({
-        data: {
-          alunoId: profileStudent.id,
-          cursoId: data.cursoId,
-          status,
-        }
+        data: { alunoId: profileStudent.id, cursoId: data.cursoId, status },
       });
 
       await tx.inscricaoHistorico.create({
@@ -49,8 +56,8 @@ export class SubService {
           alteradoPorId: userId,
           statusAnterior: status,
           statusNovo: status,
-          observacao: 'Inscrição realizada por aluno'
-        }
+          observacao: 'Inscrição realizada por aluno',
+        },
       });
 
       return sub;
@@ -59,8 +66,8 @@ export class SubService {
 
   static async listByCourse(courseId: string, userId: string, roles: string[]) {
     const course = await prisma.cursoExtensao.findUnique({ where: { id: courseId } });
-    if (!course) throw new Error('Curso não encontrado');
-    
+    if (!course) throw new HttpError('Curso não encontrado', 404);
+
     const isDeppi = roles.includes('DEPPI');
 
     if (!isDeppi) {
@@ -68,9 +75,9 @@ export class SubService {
       const professorProfile = staffProfile
         ? await prisma.perfilProfessor.findUnique({ where: { perfilServidorId: staffProfile.id } })
         : null;
-      
+
       if (!professorProfile || professorProfile.id !== course.professorId) {
-        throw new Error('Você não tem permissão para ver as inscrições deste curso');
+        throw new HttpError('Você não tem permissão para ver as inscrições deste curso', 403);
       }
     }
 
@@ -83,7 +90,7 @@ export class SubService {
 
   static async listMine(userId: string) {
     const studentProfile = await prisma.perfilAluno.findUnique({ where: { userId } });
-    if (!studentProfile) throw new Error('Usuário não possui perfil de aluno');
+    if (!studentProfile) throw new HttpError('Usuário não possui perfil de aluno', 403);
 
     return prisma.inscricao.findMany({
       where: { alunoId: studentProfile.id },
@@ -94,19 +101,18 @@ export class SubService {
 
   static async updateStatus(
     subId: string,
-    newStatus: 'APROVADA' | 'REJEITADA' | 'CANCELADA',
+    newStatus: 'APROVADA' | 'REJEITADA' | 'CANCELADA' | 'LISTA_ESPERA',
     userId: string,
     roles: string[],
     observacao?: string
   ) {
-    return prisma.$transaction(async (tx: any) => {
+    return runSerializable(async (tx) => {
       const sub = await tx.inscricao.findUnique({
         where: { id: subId },
         include: { curso: true },
       });
-      if (!sub) throw new Error('Inscrição não encontrada');
+      if (!sub) throw new HttpError('Inscrição não encontrada', 404);
 
-      // autorização: DEPPI ou professor dono do curso
       const isDeppi = roles.includes('DEPPI');
       if (!isDeppi) {
         const staffProfile = await tx.perfilServidor.findUnique({ where: { userId } });
@@ -114,22 +120,20 @@ export class SubService {
           ? await tx.perfilProfessor.findUnique({ where: { perfilServidorId: staffProfile.id } })
           : null;
         if (!professorProfile || professorProfile.id !== sub.curso.professorId) {
-          throw new Error('Você não tem permissão para alterar esta inscrição');
+          throw new HttpError('Você não tem permissão para alterar esta inscrição', 403);
         }
       }
 
-      // trava: impede transição pro mesmo status atual
       if (sub.status === newStatus) {
-        throw new Error(`Inscrição já está com status ${newStatus}`);
+        throw new HttpError(`Inscrição já está com status ${newStatus}`, 400);
       }
 
-      // se for aprovar, checar vaga
       if (newStatus === 'APROVADA') {
         const totalAceitas = await tx.inscricao.count({
           where: { cursoId: sub.cursoId, status: 'APROVADA' },
         });
         if (totalAceitas >= sub.curso.maxBeneficiados) {
-          throw new Error('Não há vagas disponíveis para aprovar esta inscrição');
+          throw new HttpError('Não há vagas disponíveis para aprovar esta inscrição', 400);
         }
       }
 
@@ -150,8 +154,13 @@ export class SubService {
         },
       });
 
-      // promoção automática da lista de espera
-      if ((newStatus === 'CANCELADA' || newStatus === 'REJEITADA') && statusAnterior === 'APROVADA') {
+      // promoção automática da lista de espera: dispara sempre que uma vaga
+      // é liberada, seja por cancelamento, rejeição OU remoção manual de aprovado
+      const liberouVaga =
+        (newStatus === 'CANCELADA' || newStatus === 'REJEITADA' || newStatus === 'LISTA_ESPERA') &&
+        statusAnterior === 'APROVADA';
+
+      if (liberouVaga) {
         const proximo = await tx.inscricao.findFirst({
           where: { cursoId: sub.cursoId, status: 'LISTA_ESPERA' },
           orderBy: { inscricaoEm: 'asc' },
@@ -178,4 +187,4 @@ export class SubService {
       return updated;
     });
   }
-};
+}

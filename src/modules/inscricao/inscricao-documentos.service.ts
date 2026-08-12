@@ -1,6 +1,7 @@
-import path from "path";
-import fs from "fs/promises";
-import { prisma } from "../../lib/prisma.js";
+import path from 'path';
+import fs from 'fs/promises';
+import { prisma } from '../../lib/prisma.js';
+import { HttpError } from '../../errors/http-error.js';
 
 type AuthUser = {
   sub: string;
@@ -12,12 +13,6 @@ type AuthUser = {
 
 type UploadedFile = Express.Multer.File;
 
-function createHttpError(message: string, statusCode: number) {
-  const error = new Error(message) as Error & { statusCode?: number };
-  error.statusCode = statusCode;
-  return error;
-}
-
 function getRoles(user?: AuthUser) {
   return [...new Set((user?.roles ?? []).map((r) => String(r).toUpperCase()))];
 }
@@ -25,58 +20,28 @@ function getRoles(user?: AuthUser) {
 async function getInscricao(inscricaoId: string) {
   return prisma.inscricao.findUnique({
     where: { id: inscricaoId },
-    include: {
-      aluno: true,
-      curso: true,
-    },
+    include: { aluno: true, curso: true },
   });
 }
 
-async function canAccessInscricao(
-  user: AuthUser,
-  inscricao: any
-) {
+async function canAccessInscricao(user: AuthUser, inscricao: any) {
   const roles = getRoles(user);
 
-  // ADMIN e DEPPI podem tudo
-  if (roles.includes("ADMIN") || roles.includes("DEPPI")) {
-    return true;
-  }
+  if (roles.includes('ADMIN') || roles.includes('DEPPI')) return true;
 
-  // ALUNO
-  if (roles.includes("ALUNO")) {
-    const perfilAluno = await prisma.perfilAluno.findUnique({
-      where: {
-        userId: user.sub,
-      },
-    });
-
-    if (!perfilAluno) {
-      return false;
-    }
-
+  if (roles.includes('ALUNO')) {
+    const perfilAluno = await prisma.perfilAluno.findUnique({ where: { userId: user.sub } });
+    if (!perfilAluno) return false;
     return perfilAluno.id === inscricao.alunoId;
   }
 
-  // PROFESSOR
-  if (roles.includes("PROFESSOR")) {
+  if (roles.includes('PROFESSOR')) {
     const perfilServidor = await prisma.perfilServidor.findUnique({
-      where: {
-        userId: user.sub,
-      },
-      include: {
-        perfilProfessor: true,
-      },
+      where: { userId: user.sub },
+      include: { perfilProfessor: true },
     });
-
-    if (!perfilServidor?.perfilProfessor) {
-      return false;
-    }
-
-    return (
-      perfilServidor.perfilProfessor.id ===
-      inscricao.curso.professorId
-    );
+    if (!perfilServidor?.perfilProfessor) return false;
+    return perfilServidor.perfilProfessor.id === inscricao.curso.professorId;
   }
 
   return false;
@@ -99,30 +64,21 @@ async function removeUploadedFiles(files: UploadedFile[]) {
   await Promise.allSettled(files.map((file) => fs.unlink(file.path)));
 }
 
-async function uploadDocuments(
-  inscricaoId: string,
-  files: UploadedFile[],
-  user: AuthUser
-) {
+async function uploadDocuments(inscricaoId: string, files: UploadedFile[], user: AuthUser) {
   if (!files || files.length === 0) {
-    throw createHttpError("Envie ao menos um arquivo", 400);
+    throw new HttpError('Envie ao menos um arquivo', 400);
   }
 
   const inscricao = await getInscricao(inscricaoId);
-
   if (!inscricao) {
     await removeUploadedFiles(files);
-    throw createHttpError("Inscrição não encontrada", 404);
+    throw new HttpError('Inscrição não encontrada', 404);
   }
 
   const allowed = await canAccessInscricao(user, inscricao);
-
   if (!allowed) {
     await removeUploadedFiles(files);
-    throw createHttpError(
-      "Sem permissão para anexar documentos nesta inscrição",
-      403
-    );
+    throw new HttpError('Sem permissão para anexar documentos nesta inscrição', 403);
   }
 
   try {
@@ -132,9 +88,7 @@ async function uploadDocuments(
           data: {
             nomeOriginal: file.originalname,
             nomeArquivo: file.filename,
-            caminho: path
-              .join("uploads", "inscricoes", inscricaoId, file.filename)
-              .replace(/\\/g, "/"),
+            caminho: path.join('uploads', 'inscricoes', inscricaoId, file.filename).replace(/\\/g, '/'),
             mimeType: file.mimetype,
             tamanho: file.size,
             inscricaoId,
@@ -152,71 +106,43 @@ async function uploadDocuments(
 
 async function listDocuments(inscricaoId: string, user: AuthUser) {
   const inscricao = await getInscricao(inscricaoId);
-
-  if (!inscricao) {
-    throw createHttpError("Inscrição não encontrada", 404);
-  }
+  if (!inscricao) throw new HttpError('Inscrição não encontrada', 404);
 
   const allowed = await canAccessInscricao(user, inscricao);
-
-  if (!allowed) {
-    throw createHttpError(
-      "Sem permissão para visualizar documentos desta inscrição",
-      403
-    );
-  }
+  if (!allowed) throw new HttpError('Sem permissão para visualizar documentos desta inscrição', 403);
 
   const documents = await prisma.inscricaoDocumento.findMany({
     where: { inscricaoId },
-    orderBy: { criadoEm: "desc" },
+    orderBy: { criadoEm: 'desc' },
   });
 
   return documents.map(documentToResponse);
 }
 
-async function downloadDocument(
-  inscricaoId: string,
-  documentoId: string,
-  user: AuthUser
-) {
+async function downloadDocument(inscricaoId: string, documentoId: string, user: AuthUser) {
   const inscricao = await getInscricao(inscricaoId);
-
-  if (!inscricao) {
-    throw createHttpError("Inscrição não encontrada", 404);
-  }
+  if (!inscricao) throw new HttpError('Inscrição não encontrada', 404);
 
   const allowed = await canAccessInscricao(user, inscricao);
-
-  if (!allowed) {
-    throw createHttpError("Sem permissão para acessar este documento", 403);
-  }
+  if (!allowed) throw new HttpError('Sem permissão para acessar este documento', 403);
 
   const documento = await prisma.inscricaoDocumento.findFirst({
-    where: {
-      id: documentoId,
-      inscricaoId,
-    },
+    where: { id: documentoId, inscricaoId },
   });
-
-  if (!documento) {
-    throw createHttpError("Documento não encontrado", 404);
-  }
+  if (!documento) throw new HttpError('Documento não encontrado', 404);
 
   const absolutePath = path.resolve(process.cwd(), documento.caminho);
 
   try {
     await fs.access(absolutePath);
   } catch {
-    throw createHttpError("Arquivo não encontrado no servidor", 404);
+    throw new HttpError('Arquivo não encontrado no servidor', 404);
   }
 
-  return {
-    documento,
-    absolutePath,
-  };
+  return { documento, absolutePath };
 }
 
-export const SubscriptionService = {
+export const InscricaoDocumentosService = {
   uploadDocuments,
   listDocuments,
   downloadDocument,
