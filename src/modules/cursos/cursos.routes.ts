@@ -36,6 +36,13 @@ router.get(
 );
 
 router.patch(
+  '/:id/publicar',
+  checkRole('DEPPI', 'PROFESSOR'),
+  validateZod(CursoIdParamSchema, 'params'),
+  CursosController.publicar
+);
+
+router.patch(
   '/:id',
   checkRole('DEPPI', 'PROFESSOR'),
   validateZod(CursoIdParamSchema, 'params'),
