@@ -1,48 +1,81 @@
 import { Router } from "express";
-import { DeppiController } from "./deppi.controller.js";
+
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { checkRole, checkPermission } from "../../middlewares/authorization.middleware.js";
+import { checkRole } from "../../middlewares/authorization.middleware.js";
 import { validateZod } from "../../middlewares/validateZod.middleware.js";
-import { createDeppiSchema, updateDeppiSchema } from "../../utils/usersAndProfiles/usersAndProfiles.schema.js";
 
-export const router = Router();
+import { DeppiController } from "./deppi.controller.js";
 
+import {
+  createDeppiSchema,
+  updateDeppiSchema,
+  deppiIdSchema,
+} from "./deppi.schema.js";
+
+const router = Router();
+
+/**
+ * Todas as rotas de DEPPI exigem autenticação.
+ */
 router.use(authMiddleware);
 
-router.get(
-  "/",
-  checkRole("ADMIN"),
-  checkPermission("usuarios", "read"),
-  DeppiController.index
-);
+/**
+ * Somente ADMIN pode gerenciar usuários DEPPI.
+ */
+router.use(checkRole("ADMIN"));
 
-router.get(
-  "/:id",
-  checkRole("ADMIN"),
-  checkPermission("usuarios", "read"),
-  DeppiController.show
-);
-
+/**
+ * POST /deppi
+ *
+ * Cadastra um novo usuário DEPPI.
+ */
 router.post(
   "/",
-  checkRole("ADMIN"),
-  checkPermission("usuarios", "create"),
   validateZod(createDeppiSchema, "body"),
   DeppiController.create
 );
 
+/**
+ * GET /deppi
+ *
+ * Lista todos os usuários DEPPI.
+ */
+router.get(
+  "/",
+  DeppiController.findAll
+);
+
+/**
+ * GET /deppi/:id
+ *
+ * Busca um DEPPI pelo ID.
+ */
+router.get(
+  "/:id",
+  validateZod(deppiIdSchema, "params"),
+  DeppiController.findById
+);
+
+/**
+ * PATCH /deppi/:id
+ *
+ * Atualiza dados do DEPPI.
+ */
 router.patch(
   "/:id",
-  checkRole("ADMIN"),
-  checkPermission("usuarios", "update"),
+  validateZod(deppiIdSchema, "params"),
   validateZod(updateDeppiSchema, "body"),
   DeppiController.update
 );
 
+/**
+ * DELETE /deppi/:id
+ *
+ * Desativa o usuário DEPPI.
+ */
 router.delete(
   "/:id",
-  checkRole("ADMIN"),
-  checkPermission("usuarios", "delete"),
+  validateZod(deppiIdSchema, "params"),
   DeppiController.remove
 );
 

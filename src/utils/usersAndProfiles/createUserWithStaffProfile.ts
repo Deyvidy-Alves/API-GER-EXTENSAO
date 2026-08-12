@@ -1,36 +1,61 @@
 import bcrypt from "bcrypt";
 import { prisma } from "../../lib/prisma.js";
 
+import type {
+  createDeppiSchema,
+  perfilServidorSchema,
+} from "../../modules/deppi/deppi.schema.js";
+
 type StaffProfileData = {
   siape: string;
-  matricula?: string;
-  setorSuap?: string;
-  lotacaoSiape?: string;
-  exercicioSiape?: string;
-  situacao?: "ATIVO" | "INATIVO" | "APOSENTADO" | "CEDIDO" | "AFASTADO";
-  regimeTrabalho?: "DEDICACAO_EXCLUSIVA" | "QUARENTA_HORAS" | "VINTE_HORAS";
-  jornadaTrabalho?: "INTEGRAL" | "PARCIAL" | "NOTURNO";
-  operaRaioX?: boolean;
-  inicioServicoPublico?: Date;
-  dataPosseInstituicao?: Date;
-  inicioExercicioInstituicao?: Date;
-  dataPosseCargo?: Date;
-  inicioExercicioCargo?: Date;
-  cargo?: string;
-  classeCargo?: string;
-  padrao?: string;
-  grupoCargo?: string;
-  codigoVaga?: string;
-  banco?: string;
-  agencia?: string;
-  contaCorrente?: string;
+  matricula?: string | undefined;
+  setorSuap?: string | undefined;
+  lotacaoSiape?: string | undefined;
+  exercicioSiape?: string | undefined;
+
+  situacao?:
+    | "ATIVO"
+    | "INATIVO"
+    | "APOSENTADO"
+    | "CEDIDO"
+    | "AFASTADO"
+    | undefined;
+
+  regimeTrabalho?:
+    | "DEDICACAO_EXCLUSIVA"
+    | "QUARENTA_HORAS"
+    | "VINTE_HORAS"
+    | undefined;
+
+  jornadaTrabalho?:
+    | "INTEGRAL"
+    | "PARCIAL"
+    | "NOTURNO"
+    | undefined;
+
+  operaRaioX?: boolean | undefined;
+
+  inicioServicoPublico?: Date | undefined;
+  dataPosseInstituicao?: Date | undefined;
+  inicioExercicioInstituicao?: Date | undefined;
+  dataPosseCargo?: Date | undefined;
+  inicioExercicioCargo?: Date | undefined;
+
+  cargo?: string | undefined;
+  classeCargo?: string | undefined;
+  padrao?: string | undefined;
+  grupoCargo?: string | undefined;
+  codigoVaga?: string | undefined;
+  banco?: string | undefined;
+  agencia?: string | undefined;
+  contaCorrente?: string | undefined;
 };
 
 type ProfessorProfileData = {
-  titulacao?: string;
-  departamento?: string;
-  nce?: string;
-  disciplinaIngresso?: string;
+  titulacao?: string | undefined;
+  departamento?: string | undefined;
+  nce?: string | undefined;
+  disciplinaIngresso?: string | undefined;
 };
 
 type CreateUserWithStaffProfileInput = {
@@ -40,8 +65,18 @@ type CreateUserWithStaffProfileInput = {
   instituicaoId: string;
   papel: "DEPPI" | "PROFESSOR";
   perfilServidor: StaffProfileData;
-  perfilProfessor?: ProfessorProfileData;
+  perfilProfessor?: ProfessorProfileData | undefined;
 };
+
+function removeUndefined<T extends object>(
+  object: T
+): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(object).filter(
+      ([, value]) => value !== undefined
+    )
+  ) as Partial<T>;
+}
 
 export async function createUserWithStaffProfile(
   input: CreateUserWithStaffProfileInput
@@ -57,7 +92,9 @@ export async function createUserWithStaffProfile(
   } = input;
 
   const existingUser = await prisma.user.findUnique({
-    where: { email },
+    where: {
+      email,
+    },
   });
 
   if (existingUser) {
@@ -84,6 +121,7 @@ export async function createUserWithStaffProfile(
         senhaHash: passwordHash,
         instituicaoId,
         ativo: true,
+
         papeis: {
           create: {
             papelId: role.id,
@@ -92,25 +130,102 @@ export async function createUserWithStaffProfile(
       },
     });
 
-    const servidor = await tx.perfilServidor.create({
-      data: {
-        userId: user.id,
-        ...perfilServidor,
-      },
-    });
+    const perfilServidorData =
+      removeUndefined(perfilServidor);
+
+    const servidor =
+      await tx.perfilServidor.create({
+        data: {
+          userId: user.id,
+
+          siape: perfilServidorData.siape!,
+
+          matricula:
+            perfilServidorData.matricula ?? null,
+
+          setorSuap:
+            perfilServidorData.setorSuap ?? null,
+
+          lotacaoSiape:
+            perfilServidorData.lotacaoSiape ?? null,
+
+          exercicioSiape:
+            perfilServidorData.exercicioSiape ?? null,
+
+          situacao:
+            perfilServidorData.situacao ?? null,
+
+          regimeTrabalho:
+            perfilServidorData.regimeTrabalho ?? null,
+
+          jornadaTrabalho:
+            perfilServidorData.jornadaTrabalho ?? null,
+
+          operaRaioX:
+            perfilServidorData.operaRaioX ?? false,
+
+          inicioServicoPublico:
+            perfilServidorData.inicioServicoPublico ?? null,
+
+          dataPosseInstituicao:
+            perfilServidorData.dataPosseInstituicao ?? null,
+
+          inicioExercicioInstituicao:
+            perfilServidorData.inicioExercicioInstituicao ?? null,
+
+          dataPosseCargo:
+            perfilServidorData.dataPosseCargo ?? null,
+
+          inicioExercicioCargo:
+            perfilServidorData.inicioExercicioCargo ?? null,
+
+          cargo:
+            perfilServidorData.cargo ?? null,
+
+          classeCargo:
+            perfilServidorData.classeCargo ?? null,
+
+          padrao:
+            perfilServidorData.padrao ?? null,
+
+          grupoCargo:
+            perfilServidorData.grupoCargo ?? null,
+
+          codigoVaga:
+            perfilServidorData.codigoVaga ?? null,
+
+          banco:
+            perfilServidorData.banco ?? null,
+
+          agencia:
+            perfilServidorData.agencia ?? null,
+
+          contaCorrente:
+            perfilServidorData.contaCorrente ?? null,
+        },
+      });
 
     let professor = null;
 
     if (papel === "PROFESSOR") {
-      professor = await tx.perfilProfessor.create({
-        data: {
-          perfilServidorId: servidor.id,
-          titulacao: perfilProfessor?.titulacao ?? null,
-          departamento: perfilProfessor?.departamento ?? null,
-          nce: perfilProfessor?.nce ?? null,
-          disciplinaIngresso: perfilProfessor?.disciplinaIngresso ?? null,
-        },
-      });
+      professor =
+        await tx.perfilProfessor.create({
+          data: {
+            perfilServidorId: servidor.id,
+
+            titulacao:
+              perfilProfessor?.titulacao ?? null,
+
+            departamento:
+              perfilProfessor?.departamento ?? null,
+
+            nce:
+              perfilProfessor?.nce ?? null,
+
+            disciplinaIngresso:
+              perfilProfessor?.disciplinaIngresso ?? null,
+          },
+        });
     }
 
     return {
