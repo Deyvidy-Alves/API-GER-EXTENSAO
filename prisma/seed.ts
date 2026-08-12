@@ -8,7 +8,7 @@
  * Para rodar o seed:
  *   npx prisma db seed
  */
-
+import 'dotenv/config'
 import { prisma } from '../src/lib/prisma.js'
 import { hash } from 'bcrypt'
 
