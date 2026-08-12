@@ -185,5 +185,22 @@ export class CursosService {
     });
 
     return curso;
-}
+  }
+
+  static async publicarCurso(id: string, userId: string, roles: string[]) {
+    const curso = await this.getCursoOrThrow(id);
+
+    await this.assertCanManageCurso(userId, roles, curso.professorId);
+
+    if (curso.status !== 'RASCUNHO') {
+      throw new Error(`Não é possível publicar um curso com status "${curso.status}". Só cursos em RASCUNHO podem ser publicados.`);
+    }
+
+    const publicado = await prisma.cursoExtensao.update({
+      where: { id },
+      data: { status: 'PUBLICADO' },
+    });
+
+    return publicado;
+  }
 }
