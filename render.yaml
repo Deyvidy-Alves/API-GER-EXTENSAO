@@ -1,0 +1,44 @@
+# Blueprint de deploy no Render (https://render.com).
+# No painel do Render: New > Blueprint > conecte este repositorio.
+# O Render le este arquivo e cria o servico automaticamente.
+services:
+  - type: web
+    name: api-ger-extensao
+    runtime: node
+    plan: free
+    region: oregon
+    branch: feat/infra-global
+    # Instala tudo (inclusive devDeps: tsx/prisma), gera o client e roda as migrations.
+    buildCommand: npm install --include=dev && npx prisma generate && npx prisma migrate deploy
+    startCommand: npx tsx src/server.ts
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Aiven (e a maioria dos MySQL na nuvem) exige conexao via SSL.
+      - key: DATABASE_SSL
+        value: "true"
+      - key: JWT_EXPIRES_IN
+        value: 15m
+      - key: REFRESH_TOKEN_EXPIRES_DAYS
+        value: "7"
+      # Gerado automaticamente pelo Render (seguro). Nao precisa preencher.
+      - key: JWT_SECRET
+        generateValue: true
+      # Preencha no painel do Render (Environment) com os dados do MySQL da nuvem.
+      # DATABASE_URL e usada pelas migrations; as demais pela conexao em runtime.
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_HOST
+        sync: false
+      - key: DATABASE_PORT
+        sync: false
+      - key: DATABASE_USER
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: DATABASE_NAME
+        sync: false
+      # Origens liberadas no CORS, separadas por virgula. Ex: https://seu-front.com
+      - key: CORS_ORIGINS
+        sync: false
