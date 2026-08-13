@@ -34,9 +34,9 @@ A API está publicada no **Render**, conectada a um **MySQL na nuvem (Aiven)**.
 - **URL base:** `https://api-ger-extensao-zcrp.onrender.com`
 - **Healthcheck:** [`/health`](https://api-ger-extensao-zcrp.onrender.com/health) → `{ "status": "ok" }`
 
-> ℹ️ Abrir a **raiz** (`/`) no navegador retorna `{"error":"Rota nao encontrada."}`. Isso é **normal** — a API não tem página inicial, só endpoints. Use um cliente HTTP (Postman/Insomnia/Thunder Client) ou o front para consumir as rotas.
+> Abrir a **raiz** (`/`) no navegador retorna `{"error":"Rota nao encontrada."}`. Isso é **normal** — a API não tem página inicial, só endpoints. Use um cliente HTTP (Postman/Insomnia/Thunder Client) ou o front para consumir as rotas.
 
-> ⚠️ **Plano grátis:** a API hiberna após ~15 min sem tráfego; a primeira requisição depois disso demora alguns segundos para "acordar". Arquivos em `/uploads` são apagados a cada deploy (disco efêmero).
+> **Plano grátis:** a API hiberna após ~15 min sem tráfego; a primeira requisição depois disso demora alguns segundos para "acordar". Arquivos em `/uploads` são apagados a cada deploy (disco efêmero).
 
 O passo a passo completo do deploy está em **[`DEPLOY.md`](./DEPLOY.md)**.
 
