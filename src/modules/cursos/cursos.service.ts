@@ -203,4 +203,22 @@ export class CursosService {
 
     return publicado;
   }
+
+  static async encerrarCurso(id: string, userId: string, roles: string[]) {
+    const curso = await this.getCursoOrThrow(id);
+
+    await this.assertCanManageCurso(userId, roles, curso.professorId);
+
+    const statusPermitidos = ['PUBLICADO', 'EM_ANDAMENTO'];
+    if (!statusPermitidos.includes(curso.status)) {
+      throw new Error(`Não é possível encerrar um curso com status "${curso.status}". Só cursos PUBLICADO ou EM_ANDAMENTO podem ser encerrados.`);
+    }
+
+    const encerrado = await prisma.cursoExtensao.update({
+      where: { id },
+      data: { status: 'ENCERRADO' },
+    });
+
+    return encerrado;
+  }
 }

@@ -43,6 +43,13 @@ router.patch(
 );
 
 router.patch(
+  '/:id/encerrar',
+  checkRole('DEPPI', 'PROFESSOR'),
+  validateZod(CursoIdParamSchema, 'params'),
+  CursosController.encerrar
+);
+
+router.patch(
   '/:id',
   checkRole('DEPPI', 'PROFESSOR'),
   validateZod(CursoIdParamSchema, 'params'),
