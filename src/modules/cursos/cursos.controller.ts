@@ -54,4 +54,22 @@ export class CursosController {
     const curso = await CursosService.removeCurso(id, userId, roles);
     return res.status(200).json(curso);
   }
+
+  static async publicar(req: Request, res: Response) {
+    const { id } = req.params as { id: string };
+    const userId = req.user!.sub;
+    const roles = req.user!.roles;
+
+    const curso = await CursosService.publicarCurso(id, userId, roles);
+    return res.status(200).json(curso);
+  }
+
+  static async encerrar(req: Request, res: Response) {
+    const { id } = req.params as { id: string };
+    const userId = req.user!.sub;
+    const roles = req.user!.roles;
+
+    const curso = await CursosService.encerrarCurso(id, userId, roles);
+    return res.status(200).json(curso);
+  }
 }

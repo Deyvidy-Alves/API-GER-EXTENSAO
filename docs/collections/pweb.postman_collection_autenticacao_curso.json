@@ -1,0 +1,291 @@
+{
+  "info": {
+    "_postman_id": "e3bb2acd-8077-4e9e-b10d-242bd175a76b",
+    "name": "pweb",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "57252942",
+    "_collection_link": "https://go.postman.co/collection/57252942-e3bb2acd-8077-4e9e-b10d-242bd175a76b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "modulo-autenticacao",
+      "item": [
+        {
+          "name": "modulo-esqueci-senha",
+          "item": [
+            {
+              "name": "esqueci-senha",
+              "item": [
+                {
+                  "name": "esqueci-senha",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"email\": \"aluno@ifce.edu.br\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:3000/autenticacao/esqueci-senha",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "3000",
+                      "path": [
+                        "autenticacao",
+                        "esqueci-senha"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "refresh token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refreshToken\": \"d38720879ffc78418b28ae46a5cfdd82cdf273df9f32f827237021974ae379a8633ca9e00dd1b9bd\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/autenticacao/refresh",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "autenticacao",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"aluno@ifce.edu.br\",\n    \"senha\": \"12345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/autenticacao/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "autenticacao",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_15vc}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/autenticacao/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "autenticacao",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refreshToken\": \"d38720879ffc78418b28ae46a5cfdd82cdf273df9f32f827237021974ae379a8633ca9e00dd1b9bd\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/autenticacao/logout",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "autenticacao",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "registro",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\":\"Teste CPF 2\",\n    \"email\":\"cpf2@ifce.edu.br\",\n    \"senha\":\"senha1234\",\n    \"confirmarSenha\":\"senha1234\",\n    \"cpf\":\"123.456.789-00\",\n    \"instituicaoId\":\"e82643c5-5334-4b5a-9240-a640bf62898d\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/autenticacao/registro",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "autenticacao",
+                "registro"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "modulo-curso",
+      "item": [
+        {
+          "name": "publicar",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_108x}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/cursos/80770483-11e7-4145-ba20-f8b94139c294/publicar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "cursos",
+                "80770483-11e7-4145-ba20-f8b94139c294",
+                "publicar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "encerrar",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_108x}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:3000/cursos/80770483-11e7-4145-ba20-f8b94139c294/encerrar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "cursos",
+                "80770483-11e7-4145-ba20-f8b94139c294",
+                "encerrar"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_secret_15vc",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_108x",
+      "secret": true
+    }
+  ]
+}
