@@ -8,13 +8,19 @@
 | POST | `/autenticacao/login` | Login, retorna JWT | Não |
 | POST | `/autenticacao/esqueci-senha` | Solicita recuperação de senha (envia token) | Não |
 | POST | `/autenticacao/redefinir-senha` | Redefine a senha usando o token recebido | Não |
+| POST | `/autenticacao/refresh` | Renova o access token a partir do refresh token | Não |
+| POST | `/autenticacao/logout` | Revoga o refresh token | Não |
 | GET | `/autenticacao/me` | Dados do usuário logado (payload do token) | Sim |
 
 ### Perfil (`/perfil`)
 
 | Método | Rota | Descrição | Auth |
 |---|---|---|---|
+| GET | `/perfil` | Retorna o perfil do usuário logado | Sim |
 | PATCH | `/perfil/aluno` | Cria ou atualiza o perfil do aluno logado | Sim |
+| PATCH | `/perfil/foto` | Atualiza a foto de perfil (campo `foto`, multipart) | Sim |
+| PATCH | `/perfil/telefone` | Atualiza o telefone | Sim |
+| PATCH | `/perfil/endereco` | Atualiza o endereço | Sim |
 
 ### Cursos (`/cursos`)
 
@@ -29,6 +35,7 @@ Fonte única de criação/gestão de cursos. `instituicaoId` **não** é enviado
 | PATCH | `/cursos/:id` | Atualiza curso (DEPPI sempre; PROFESSOR só se for o dono) | JWT — DEPPI, PROFESSOR |
 | PATCH | `/cursos/:id/publicar` | Publica curso (`RASCUNHO → PUBLICADO`; DEPPI sempre, PROFESSOR só se for o dono) | JWT — DEPPI, PROFESSOR |
 | PATCH | `/cursos/:id/encerrar` | Encerra curso (`PUBLICADO`/`EM_ANDAMENTO → ENCERRADO`; DEPPI sempre, PROFESSOR só se for o dono) | JWT — DEPPI, PROFESSOR |
+| PATCH | `/cursos/:id/close` | Fecha as inscrições do curso | JWT — DEPPI, PROFESSOR |
 | DELETE | `/cursos/:id` | Cancela curso (`status → CANCELADO`, não remove o registro) | JWT — DEPPI, PROFESSOR |
 
 ### Professor (`/professor`)
@@ -87,6 +94,50 @@ Suportam `?formato=json|xlsx|pdf` (padrão: `json`).
 | GET | `/relatorios/enrollments/:cursoId` | Inscritos de um curso | JWT — `relatorio:read` |
 | GET | `/relatorios/enrollments-by-status` | Total de inscrições por status | JWT — `relatorio:read` |
 | GET | `/relatorios/general` | Relatório consolidado geral | JWT — `relatorio:read` |
+
+### Instituições (`/instituicoes`)
+
+| Método | Rota | Descrição | Auth / Permissão |
+|---|---|---|---|
+| GET | `/instituicoes` | Lista instituições | JWT — ADMIN, `instituicao:read` |
+| GET | `/instituicoes/:id` | Detalha instituição | JWT — ADMIN, `instituicao:read` |
+| POST | `/instituicoes` | Cria instituição | JWT — ADMIN, `instituicao:create` |
+| PATCH | `/instituicoes/:id` | Atualiza instituição | JWT — ADMIN, `instituicao:update` |
+| PATCH | `/instituicoes/:id/status` | Ativa/desativa instituição | JWT — ADMIN, `instituicao:update` |
+| DELETE | `/instituicoes/:id` | Remove instituição | JWT — ADMIN, `instituicao:delete` |
+
+### Usuários (`/usuarios`)
+
+| Método | Rota | Descrição | Auth / Permissão |
+|---|---|---|---|
+| GET | `/usuarios` | Lista usuários (filtros na query) | JWT — ADMIN, `usuario:read` |
+| GET | `/usuarios/:id` | Detalha usuário | JWT — ADMIN, `usuario:read` |
+| PATCH | `/usuarios/:id` | Atualiza usuário | JWT — ADMIN, `usuario:update` |
+| DELETE | `/usuarios/:id` | Remove usuário | JWT — ADMIN, `usuario:delete` |
+
+### Permissões (`/permissoes`)
+
+Gestão do RBAC: papéis, permissões e seus vínculos.
+
+| Método | Rota | Descrição | Auth / Permissão |
+|---|---|---|---|
+| GET | `/permissoes/papeis` | Lista papéis | JWT — ADMIN, `permissao:read` |
+| GET | `/permissoes` | Lista permissões | JWT — ADMIN, `permissao:read` |
+| POST | `/permissoes` | Cria permissão | JWT — ADMIN, `permissao:create` |
+| POST | `/permissoes/usuarios/:userId/papeis` | Vincula papel a um usuário | JWT — ADMIN, `permissao:update` |
+| DELETE | `/permissoes/usuarios/:userId/papeis/:papelId` | Desvincula papel de um usuário | JWT — ADMIN, `permissao:update` |
+| POST | `/permissoes/papeis/:papelId/permissoes` | Vincula permissão a um papel | JWT — ADMIN, `permissao:update` |
+| DELETE | `/permissoes/papeis/:papelId/permissoes/:permissaoId` | Desvincula permissão de um papel | JWT — ADMIN, `permissao:update` |
+
+### Departamentos (`/departamentos`)
+
+| Método | Rota | Descrição | Auth / Permissão |
+|---|---|---|---|
+| GET | `/departamentos` | Lista departamentos (filtros na query) | JWT — ADMIN, `departamento:read` |
+| GET | `/departamentos/:id` | Detalha departamento | JWT — ADMIN, `departamento:read` |
+| POST | `/departamentos` | Cria departamento | JWT — ADMIN, `departamento:create` |
+| PATCH | `/departamentos/:id` | Atualiza departamento | JWT — ADMIN, `departamento:update` |
+| DELETE | `/departamentos/:id` | Remove departamento | JWT — ADMIN, `departamento:delete` |
 
 ### Outras
 
