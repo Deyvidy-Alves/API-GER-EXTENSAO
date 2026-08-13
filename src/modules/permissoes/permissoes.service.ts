@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 import { type CreatePermissaoDTO } from "./permissoes.schema.js";
 
 export class PermissoesService {
@@ -34,7 +35,7 @@ export class PermissoesService {
     });
 
     if (exists) {
-      throw new Error("Esta permissão já existe.");
+      throw new AppError("Esta permissão já existe.", 409);
     }
 
     return prisma.permissao.create({ data });
@@ -44,19 +45,19 @@ export class PermissoesService {
   static async vincularPapel(userId: string, papelId: string) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
-      throw new Error("Usuário não encontrado.");
+      throw new AppError("Usuário não encontrado.", 404);
     }
 
     const papel = await prisma.papel.findUnique({ where: { id: papelId } });
     if (!papel) {
-      throw new Error("Papel não encontrado.");
+      throw new AppError("Papel não encontrado.", 404);
     }
 
     const jaTem = await prisma.userPapel.findUnique({
       where: { userId_papelId: { userId, papelId } },
     });
     if (jaTem) {
-      throw new Error("Usuário já possui este papel.");
+      throw new AppError("Usuário já possui este papel.", 409);
     }
 
     await prisma.userPapel.create({ data: { userId, papelId } });
@@ -69,7 +70,7 @@ export class PermissoesService {
       where: { userId_papelId: { userId, papelId } },
     });
     if (!vinculo) {
-      throw new Error("Vínculo não encontrado.");
+      throw new AppError("Vínculo não encontrado.", 404);
     }
 
     await prisma.userPapel.delete({
@@ -83,19 +84,19 @@ export class PermissoesService {
   static async vincularPermissao(papelId: string, permissaoId: string) {
     const papel = await prisma.papel.findUnique({ where: { id: papelId } });
     if (!papel) {
-      throw new Error("Papel não encontrado.");
+      throw new AppError("Papel não encontrado.", 404);
     }
 
     const permissao = await prisma.permissao.findUnique({ where: { id: permissaoId } });
     if (!permissao) {
-      throw new Error("Permissão não encontrada.");
+      throw new AppError("Permissão não encontrada.", 404);
     }
 
     const jaTem = await prisma.papelPermissao.findUnique({
       where: { papelId_permissaoId: { papelId, permissaoId } },
     });
     if (jaTem) {
-      throw new Error("Papel já possui esta permissão.");
+      throw new AppError("Papel já possui esta permissão.", 409);
     }
 
     await prisma.papelPermissao.create({ data: { papelId, permissaoId } });
@@ -108,7 +109,7 @@ export class PermissoesService {
       where: { papelId_permissaoId: { papelId, permissaoId } },
     });
     if (!vinculo) {
-      throw new Error("Vínculo não encontrado.");
+      throw new AppError("Vínculo não encontrado.", 404);
     }
 
     await prisma.papelPermissao.delete({

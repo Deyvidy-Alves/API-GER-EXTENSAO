@@ -1,17 +1,18 @@
 import { ro } from 'zod/locales';
 import { prisma } from '../../lib/prisma.js';
+import { AppError } from '../../utils/AppError.js';
 import { type CreateSubDTO } from './sub.schema.js';
 
 export class SubService {
   static async create (data: CreateSubDTO, userId: string) {
     // verificar se usuario (aluno) existe
     const profileStudent = await prisma.perfilAluno.findUnique({ where: { userId } });
-    if (!profileStudent) throw new Error('Usuário não possui perfil de aluno');
+    if (!profileStudent) throw new AppError('Usuário não possui perfil de aluno', 404);
 
     //verificar se curso existe e se está publicado
     const course = await prisma.cursoExtensao.findUnique({ where: { id: data.cursoId } });
-    if (!course) throw new Error('Curso não encontrado')
-    if(course.status !== 'PUBLICADO') throw new Error('Curso não foi publicado.');
+    if (!course) throw new AppError('Curso não encontrado', 404)
+    if(course.status !== 'PUBLICADO') throw new AppError('Curso não foi publicado.', 400);
 
     //verifica inscrição duplicada
     const isRegistered = await prisma.inscricao.findUnique({
@@ -23,7 +24,7 @@ export class SubService {
       },
     });
 
-    if (isRegistered) throw new Error('Aluno já possui inscrição neste curso');
+    if (isRegistered) throw new AppError('Aluno já possui inscrição neste curso', 409);
 
     //verificar vagas
     const totalAccepted = await prisma.inscricao.count({
@@ -59,8 +60,8 @@ export class SubService {
 
   static async listByCourse(courseId: string, userId: string, roles: string[]) {
     const course = await prisma.cursoExtensao.findUnique({ where: { id: courseId } });
-    if (!course) throw new Error('Curso não encontrado');
-    
+    if (!course) throw new AppError('Curso não encontrado', 404);
+
     const isDeppi = roles.includes('DEPPI');
 
     if (!isDeppi) {
@@ -70,7 +71,7 @@ export class SubService {
         : null;
       
       if (!professorProfile || professorProfile.id !== course.professorId) {
-        throw new Error('Você não tem permissão para ver as inscrições deste curso');
+        throw new AppError('Você não tem permissão para ver as inscrições deste curso', 403);
       }
     }
 
@@ -83,7 +84,7 @@ export class SubService {
 
   static async listMine(userId: string) {
     const studentProfile = await prisma.perfilAluno.findUnique({ where: { userId } });
-    if (!studentProfile) throw new Error('Usuário não possui perfil de aluno');
+    if (!studentProfile) throw new AppError('Usuário não possui perfil de aluno', 404);
 
     return prisma.inscricao.findMany({
       where: { alunoId: studentProfile.id },
@@ -104,7 +105,7 @@ export class SubService {
         where: { id: subId },
         include: { curso: true },
       });
-      if (!sub) throw new Error('Inscrição não encontrada');
+      if (!sub) throw new AppError('Inscrição não encontrada', 404);
 
       // autorização: DEPPI ou professor dono do curso
       const isDeppi = roles.includes('DEPPI');
@@ -114,13 +115,13 @@ export class SubService {
           ? await tx.perfilProfessor.findUnique({ where: { perfilServidorId: staffProfile.id } })
           : null;
         if (!professorProfile || professorProfile.id !== sub.curso.professorId) {
-          throw new Error('Você não tem permissão para alterar esta inscrição');
+          throw new AppError('Você não tem permissão para alterar esta inscrição', 403);
         }
       }
 
       // trava: impede transição pro mesmo status atual
       if (sub.status === newStatus) {
-        throw new Error(`Inscrição já está com status ${newStatus}`);
+        throw new AppError(`Inscrição já está com status ${newStatus}`, 400);
       }
 
       // se for aprovar, checar vaga
@@ -129,7 +130,7 @@ export class SubService {
           where: { cursoId: sub.cursoId, status: 'APROVADA' },
         });
         if (totalAceitas >= sub.curso.maxBeneficiados) {
-          throw new Error('Não há vagas disponíveis para aprovar esta inscrição');
+          throw new AppError('Não há vagas disponíveis para aprovar esta inscrição', 400);
         }
       }
 

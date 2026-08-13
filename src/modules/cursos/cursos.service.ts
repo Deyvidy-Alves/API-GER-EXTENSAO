@@ -1,4 +1,5 @@
 import { prisma } from '../../lib/prisma.js';
+import { AppError } from '../../utils/AppError.js';
 import { type CreateCursoDTO, type UpdateCursoDTO, type ListCursosQueryDTO } from './cursos.schema.js';
 
 // Remove chaves com valor undefined do objeto.
@@ -22,7 +23,7 @@ export class CursosService {
     });
 
     if (!perfilServidor || !perfilServidor.perfilProfessor) {
-      throw new Error('Usuário não possui um PerfilProfessor associado.');
+      throw new AppError('Usuário não possui um PerfilProfessor associado.', 400);
     }
 
     return perfilServidor.perfilProfessor;
@@ -39,7 +40,7 @@ export class CursosService {
     });
 
     if (!user) {
-      throw new Error('Usuário não encontrado.');
+      throw new AppError('Usuário não encontrado.', 404);
     }
 
     const cleanData = stripUndefined(data);
@@ -93,7 +94,7 @@ export class CursosService {
     });
 
     if (!curso) {
-      throw new Error('Curso não encontrado.');
+      throw new AppError('Curso não encontrado.', 404);
     }
 
     return curso;
@@ -104,7 +105,7 @@ export class CursosService {
     const curso = await prisma.cursoExtensao.findUnique({ where: { id } });
 
     if (!curso) {
-      throw new Error('Curso não encontrado.');
+      throw new AppError('Curso não encontrado.', 404);
     }
 
     return curso;
@@ -124,10 +125,10 @@ export class CursosService {
         return;
       }
 
-      throw new Error('Você não tem permissão para gerenciar este curso: não é o professor responsável.');
+      throw new AppError('Você não tem permissão para gerenciar este curso: não é o professor responsável.', 403);
     }
 
-    throw new Error('Você não tem permissão para gerenciar este curso.');
+    throw new AppError('Você não tem permissão para gerenciar este curso.', 403);
   }
 
   static async updateCurso(id: string, userId: string, roles: string[], data: UpdateCursoDTO) {
@@ -171,7 +172,7 @@ export class CursosService {
   static async uploadImagem(id: string, file?: Express.Multer.File) {
 
     if (!file) {
-        throw new Error("Imagem não enviada.");
+        throw new AppError("Imagem não enviada.", 400);
     }
 
     const curso = await prisma.cursoExtensao.update({
@@ -193,7 +194,7 @@ export class CursosService {
     await this.assertCanManageCurso(userId, roles, curso.professorId);
 
     if (curso.status !== 'RASCUNHO') {
-      throw new Error(`Não é possível publicar um curso com status "${curso.status}". Só cursos em RASCUNHO podem ser publicados.`);
+      throw new AppError(`Não é possível publicar um curso com status "${curso.status}". Só cursos em RASCUNHO podem ser publicados.`, 400);
     }
 
     const publicado = await prisma.cursoExtensao.update({
@@ -211,7 +212,7 @@ export class CursosService {
 
     const statusPermitidos = ['PUBLICADO', 'EM_ANDAMENTO'];
     if (!statusPermitidos.includes(curso.status)) {
-      throw new Error(`Não é possível encerrar um curso com status "${curso.status}". Só cursos PUBLICADO ou EM_ANDAMENTO podem ser encerrados.`);
+      throw new AppError(`Não é possível encerrar um curso com status "${curso.status}". Só cursos PUBLICADO ou EM_ANDAMENTO podem ser encerrados.`, 400);
     }
 
     const encerrado = await prisma.cursoExtensao.update({

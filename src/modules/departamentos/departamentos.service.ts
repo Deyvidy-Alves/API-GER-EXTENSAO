@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 import {
   type CreateDepartamentoDTO,
   type UpdateDepartamentoDTO,
@@ -37,7 +38,7 @@ export class DepartamentosService {
     });
 
     if (!departamento) {
-      throw new Error("Departamento não encontrado.");
+      throw new AppError("Departamento não encontrado.", 404);
     }
 
     return departamento;
@@ -50,7 +51,7 @@ export class DepartamentosService {
     });
 
     if (!instituicao) {
-      throw new Error("Instituição não encontrada.");
+      throw new AppError("Instituição não encontrada.", 404);
     }
   }
 

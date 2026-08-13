@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 import { type CreateInstituicaoDTO, type UpdateInstituicaoDTO } from "./instituicoes.schema.js";
 
 // Remove chaves com valor undefined do objeto.
@@ -29,7 +30,7 @@ export class InstituicoesService {
     });
 
     if (!instituicao) {
-      throw new Error("Instituição não encontrada.");
+      throw new AppError("Instituição não encontrada.", 404);
     }
 
     return instituicao;
@@ -41,7 +42,7 @@ export class InstituicoesService {
     });
 
     if (siglaExists) {
-      throw new Error("Já existe uma instituição com esta sigla.");
+      throw new AppError("Já existe uma instituição com esta sigla.", 409);
     }
 
     return prisma.instituicao.create({ data: stripUndefined(data) as any });
@@ -56,7 +57,7 @@ export class InstituicoesService {
       });
 
       if (siglaExists && siglaExists.id !== id) {
-        throw new Error("Já existe uma instituição com esta sigla.");
+        throw new AppError("Já existe uma instituição com esta sigla.", 409);
       }
     }
 
@@ -80,8 +81,9 @@ export class InstituicoesService {
 
     // nao exclui se tiver usuarios ou cursos vinculados
     if (instituicao._count.usuarios > 0 || instituicao._count.cursos > 0) {
-      throw new Error(
-        "Não é possível excluir: existem usuários ou cursos vinculados a esta instituição."
+      throw new AppError(
+        "Não é possível excluir: existem usuários ou cursos vinculados a esta instituição.",
+        400
       );
     }
 
