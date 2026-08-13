@@ -72,30 +72,94 @@ O arquivo [`render.yaml`](./render.yaml) já configura o serviço.
 
 5. **Apply / Create**. O build roda `prisma generate` + `prisma migrate deploy`
    (cria as tabelas no banco novo) e sobe a API.
-6. Ao terminar, a API fica em `https://api-ger-extensao.onrender.com`.
-   Teste: `GET https://api-ger-extensao.onrender.com/health` deve retornar `{ "status": "ok" }`.
+6. Ao terminar, a API fica no ar. **Atenção:** o Render acrescenta um sufixo
+   aleatório ao domínio, então a URL final **não** é exatamente o nome do serviço.
+   A URL real deste deploy é:
+
+   ```
+   https://api-ger-extensao-zcrp.onrender.com
+   ```
+
+   A URL exata aparece no log do deploy (`Available at your primary URL ...`) e no
+   topo do serviço no painel do Render. Teste:
+   `GET https://api-ger-extensao-zcrp.onrender.com/health` deve retornar `{ "status": "ok" }`.
+
+   > Abrir a **raiz** (`/`) no navegador retorna `{"error":"Rota nao encontrada."}` —
+   > isso é **normal**: a API não tem página inicial, só endpoints. Essa resposta em
+   > JSON, aliás, confirma que a API está no ar. Use `/health` para o "sinal de vida".
 
 ---
 
-## 3. (Opcional) Popular com dados de teste
+## 3. (Opcional) Popular o banco com dados de teste
 
-O banco de produção sobe vazio. Para criar os usuários de teste, rode o seed
-apontando para o banco da nuvem — a partir da sua máquina:
+O banco de produção sobe **vazio** (só com as tabelas). Para criar os usuários de
+teste, rode o seed a partir da sua máquina apontando para o banco da **nuvem**.
 
-```bash
-# Use a mesma DATABASE_URL e demais variáveis do banco de produção
-DATABASE_URL="mysql://..." DATABASE_HOST="..." DATABASE_PORT="..." \
-DATABASE_USER="..." DATABASE_PASSWORD="..." DATABASE_NAME="..." \
-npx tsx prisma/seed.ts
-```
+### 3.1. Aponte as variáveis para o banco da nuvem
 
-No PowerShell (Windows):
+O seu `.env` local aponta para o MySQL de `localhost`. Para os comandos abaixo
+usarem o banco da nuvem, defina as variáveis do Aiven na **mesma janela** do
+PowerShell antes de rodar (o `dotenv` **não** sobrescreve o que você já definiu,
+então os valores abaixo têm prioridade):
 
 ```powershell
-$env:DATABASE_URL="mysql://..."; $env:DATABASE_HOST="..."; $env:DATABASE_PORT="..."
-$env:DATABASE_USER="..."; $env:DATABASE_PASSWORD="..."; $env:DATABASE_NAME="..."
+$env:DATABASE_HOST="mysql-xxxx.aivencloud.com"
+$env:DATABASE_PORT="18805"
+$env:DATABASE_USER="avnadmin"
+$env:DATABASE_PASSWORD="sua-senha"
+$env:DATABASE_NAME="defaultdb"
+$env:DATABASE_SSL="true"
+$env:DATABASE_URL="mysql://avnadmin:sua-senha@mysql-xxxx.aivencloud.com:18805/defaultdb?sslaccept=accept_invalid_certs"
+```
+
+> ⚠️ Essas variáveis valem **só naquela janela**. Abriu outro terminal? Defina de
+> novo — senão os comandos do Prisma vão mexer no banco `localhost` por engano.
+> **Sempre confira** a linha `Datasource "db": MySQL database "..." at "..."` que o
+> Prisma imprime: precisa mostrar `defaultdb ... aivencloud.com`, e não `localhost`.
+
+### 3.2. Se o DNS da sua rede não resolver o host do Aiven
+
+Alguns roteadores têm o DNS quebrado e o Node não acha o endereço, dando o erro
+`getaddrinfo ENOTFOUND mysql-xxxx.aivencloud.com`. Para contornar, descubra o IP
+usando o DNS do Google:
+
+```powershell
+nslookup mysql-xxxx.aivencloud.com 8.8.8.8
+```
+
+Copie o `Address` retornado e, num PowerShell **como Administrador**, aponte esse IP
+para o host no arquivo `hosts` do Windows:
+
+```powershell
+Add-Content -Path "$env:windir\System32\drivers\etc\hosts" -Value "IP_DO_AIVEN mysql-xxxx.aivencloud.com"
+ipconfig /flushdns
+```
+
+> O IP do Aiven pode mudar com o tempo. Se voltar a dar `ENOTFOUND`, refaça o
+> `nslookup` e atualize a linha do `hosts`. Correção definitiva: trocar o DNS do
+> Windows/roteador para `8.8.8.8`. **Isso vale só para a sua máquina** — o Render
+> resolve o host normalmente e não precisa de nada disso.
+
+### 3.3. Rode o seed
+
+Com as variáveis apontando para a nuvem:
+
+```powershell
 npx tsx prisma/seed.ts
 ```
+
+Sucesso: `✅ Seed concluída — todas as tabelas populadas.`
+
+> **Erro de coluna inexistente?** Se o seed reclamar algo como
+> `The column users.fotoPerfil does not exist`, o banco da nuvem está
+> dessincronizado das migrations (marcadas como aplicadas sem terem criado as
+> colunas). Como o banco de produção está vazio, resete-o — isso apaga tudo e
+> reaplica as 11 migrations do zero. **Confira o `Datasource` antes** para não
+> resetar o `localhost` por engano:
+>
+> ```powershell
+> npx prisma migrate reset --force
+> ```
 
 ---
 
