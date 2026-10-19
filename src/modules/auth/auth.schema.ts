@@ -1,9 +1,14 @@
 import { z } from 'zod'
 import { isValidCpf } from '../../utils/isValidCpf.js'
 
+// Normaliza o email antes de validar o formato: remove espaços nas pontas e
+// deixa tudo em minúsculo, para evitar contas duplicadas (Ana@x.com vs ana@x.com)
+// e falhas de login por diferença de caixa.
+const emailNormalizado = z.string().trim().toLowerCase().pipe(z.email('Email inválido.'))
+
 export const registerSchema = z.object({
     nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres.'),
-    email: z.email('Email inválido.'),
+    email: emailNormalizado,
     senha: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres.'),
     confirmarSenha: z.string().min(8, 'Confirmação de senha é obrigatória.'),
     instituicaoId: z.uuid('ID da instituicao inválido.'),
@@ -14,12 +19,12 @@ export const registerSchema = z.object({
 })
 
 export const loginSchema = z.object({
-  email: z.email('Email inválido.'),
+  email: emailNormalizado,
   senha: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres.')
 })
 
 export const forgotPasswordSchema = z.object({
-  email: z.email('Email inválido.')
+  email: emailNormalizado
 })
 
 export const resetPasswordSchema = z.object({
