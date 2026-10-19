@@ -180,8 +180,13 @@ async function main() {
   })
 
   // ─── 5. USUÁRIOS ─────────────────────────────────────────────────────────
+  // O ADMIN inicial (bootstrap) vem das variaveis ADMIN_EMAIL / ADMIN_PASSWORD
+  // quando definidas; caso contrario usa credenciais padrao de desenvolvimento.
+  const adminEmail = process.env.ADMIN_EMAIL ?? 'admin@ifce.edu.br'
+  const adminPassword = process.env.ADMIN_PASSWORD ?? 'admin123'
+
   const usuariosBase = [
-    { nome: 'Administrador',   email: 'admin@ifce.edu.br',     senha: 'admin123',     papel: admin },
+    { nome: 'Administrador',   email: adminEmail,              senha: adminPassword,  papel: admin },
     { nome: 'Membro DEPPI',    email: 'deppi@ifce.edu.br',     senha: 'deppi123',     papel: deppi },
     { nome: 'Professor Teste', email: 'professor@ifce.edu.br', senha: 'professor123', papel: professor },
     { nome: 'Aluno Teste',     email: 'aluno@ifce.edu.br',     senha: 'aluno123',     papel: aluno },
