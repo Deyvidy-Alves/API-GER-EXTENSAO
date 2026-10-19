@@ -2,6 +2,11 @@ import { type Request, type Response } from 'express';
 import { ProfessorService } from './professor.service.js';
 
 export class ProfessorController {
+  static async criarProfessor(req: Request, res: Response) {
+    const professor = await ProfessorService.criarProfessor(req.body);
+    res.status(201).json(professor);
+  }
+
   static async getPerfil(req: Request, res: Response) {
     const userId = req.user!.sub;
     const perfil = await ProfessorService.getPerfil(userId);
