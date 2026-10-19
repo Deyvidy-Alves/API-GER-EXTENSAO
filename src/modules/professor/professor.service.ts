@@ -1,8 +1,74 @@
+import bcrypt from 'bcrypt';
 import { prisma } from '../../lib/prisma.js';
 import { AppError } from '../../utils/AppError.js';
-import { type AtualizarPerfilDTO } from './professor.schema.js';
+import { type AtualizarPerfilDTO, type CriarProfessorDTO } from './professor.schema.js';
 
 export class ProfessorService {
+  // Cria um professor do zero: usuário + perfil servidor + perfil professor +
+  // papel PROFESSOR, tudo numa única transação. Usado por DEPPI/ADMIN.
+  static async criarProfessor(data: CriarProfessorDTO) {
+    const emailExistente = await prisma.user.findUnique({ where: { email: data.email } });
+    if (emailExistente) {
+      throw new AppError('Já existe um usuário com este email.', 409);
+    }
+
+    const siapeExistente = await prisma.perfilServidor.findUnique({
+      where: { siape: data.perfilServidor.siape },
+    });
+    if (siapeExistente) {
+      throw new AppError('Já existe um servidor com este SIAPE.', 409);
+    }
+
+    const papelProfessor = await prisma.papel.findUnique({ where: { nome: 'PROFESSOR' } });
+    if (!papelProfessor) {
+      throw new AppError('Papel PROFESSOR não encontrado. Rode o seed.', 404);
+    }
+
+    const senhaHash = await bcrypt.hash(data.senha, 10);
+
+    return prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          nome: data.nome,
+          email: data.email,
+          senhaHash,
+          instituicaoId: data.instituicaoId,
+          ativo: true,
+          papeis: { create: { papelId: papelProfessor.id } },
+        },
+      });
+
+      // `as any`: os opcionais do Zod chegam como `T | undefined`, que o Prisma
+      // rejeita sob exactOptionalPropertyTypes (mesmo padrao ja usado no projeto).
+      const perfilServidor = await tx.perfilServidor.create({
+        data: {
+          userId: user.id,
+          ...data.perfilServidor,
+        } as any,
+      });
+
+      const perfilProfessor = await tx.perfilProfessor.create({
+        data: {
+          perfilServidorId: perfilServidor.id,
+          ...(data.perfilProfessor ?? {}),
+        } as any,
+      });
+
+      return {
+        id: user.id,
+        nome: user.nome,
+        email: user.email,
+        ativo: user.ativo,
+        instituicaoId: user.instituicaoId,
+        perfilServidor: {
+          ...perfilServidor,
+          perfilProfessor,
+        },
+        roles: ['PROFESSOR'],
+      };
+    });
+  }
+
   // busca o perfilProfessor a partir do userId do token
   private static async getPerfilProfessor(userId: string) {
     const perfilServidor = await prisma.perfilServidor.findUnique({
